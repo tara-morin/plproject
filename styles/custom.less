@@ -1,0 +1,47 @@
+
+
+@light-blue: #d9ebff;
+@medium-blue: #007bff;
+@dark-blue:#164c8a;
+@navy-blue: #00254f;
+@gray: #f8f9fa;
+
+.coloring{
+    background-color: @light-blue;
+    color:@navy-blue;
+}
+
+body{
+    .coloring();
+}
+
+.btn{
+    color:white;
+    background-color: @dark-blue;
+}
+.btn:hover{
+    .coloring()
+}
+.container-fluid{
+    gap: 20px;
+}
+
+@media(min-width:576px){
+    .navbar-nav{
+        width: 100%;
+        justify-content: space-evenly;
+    }
+}
+
+
+nav{
+    .navbar-nav{
+        a{
+            color:@medium-blue;
+        }
+    }
+    .navbar-brand{
+        color:@navy-blue;
+    }
+    
+}

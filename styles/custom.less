@@ -15,6 +15,10 @@ body{
     .coloring();
 }
 
+.list-group-item{
+    color: @navy-blue;
+}
+
 .btn{
     color:white;
     background-color: @dark-blue;
@@ -26,11 +30,22 @@ body{
     gap: 20px;
 }
 
+.third{
+    background-color: #9e610d;
+    color: white;
+}
+
 @media(min-width:576px){
     .navbar-nav{
         width: 100%;
         justify-content: space-evenly;
     }
+}
+
+.username{
+    font-weight: bold;
+    font-size: clamp(0.8rem, 2vw, 1.2rem); ;
+    color:@medium-blue;
 }
 
 

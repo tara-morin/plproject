@@ -1,8 +1,12 @@
 
-@primary-color: #0d6efd; 
-@secondary-color: #6c757d;
-@dark-color: #212529;
-@light-color: #f8f9fa;
+
+
+@light-blue: #d9ebff;
+@medium-blue: #007bff;
+@dark-blue:#164c8a;
+@navy-blue: #00254f;
+@gray: #f8f9fa;
+@secondary-gray: #6c757d;
 @accent-color: #ffb3b3;
 
 @heading-font: 'Merriweather', serif;
@@ -10,8 +14,8 @@
 
 body {
   font-family: @body-font;
-  background-color: #fafafa;
-  color: @dark-color;
+  background-color: @light-blue;
+  color: @navy-blue;
   margin: 0;
   padding: 0;
 }
@@ -21,23 +25,23 @@ h1, h2, h3 {
 }
 
 .navbar-brand {
-  color: @primary-color !important;
+  color: @medium-blue;
   font-weight: bold;
 
   &:hover {
-    color: darken(@primary-color, 10%);
+    color: darken(@dark-blue, 10%);
     text-decoration: none;
   }
 }
 
 .footer {
-  background-color: @light-color;
+  background-color: @light-blue;
   padding: 1rem;
   text-align: center;
 
   p {
     margin: 0;
-    color: @secondary-color;
+    color: @secondary-gray;
   }
 }
 
@@ -58,7 +62,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .hero-section {
-  background: linear-gradient(to right, @primary-color, @secondary-color);
+  background: linear-gradient(to right, @medium-blue, @secondary-gray);
   color: #fff;
   padding: 3rem;
   text-align: center;
@@ -76,11 +80,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 //Tara's part
-@light-blue: #d9ebff;
-@medium-blue: #007bff;
-@dark-blue:#164c8a;
-@navy-blue: #00254f;
-@gray: #f8f9fa;
+
 
 .coloring{
     background-color: @light-blue;

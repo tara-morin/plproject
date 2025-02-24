@@ -1,3 +1,81 @@
+
+@primary-color: #0d6efd; 
+@secondary-color: #6c757d;
+@dark-color: #212529;
+@light-color: #f8f9fa;
+@accent-color: #ffb3b3;
+
+@heading-font: 'Merriweather', serif;
+@body-font: 'Open Sans', sans-serif;
+
+body {
+  font-family: @body-font;
+  background-color: #fafafa;
+  color: @dark-color;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-family: @heading-font;
+}
+
+.navbar-brand {
+  color: @primary-color !important;
+  font-weight: bold;
+
+  &:hover {
+    color: darken(@primary-color, 10%);
+    text-decoration: none;
+  }
+}
+
+.footer {
+  background-color: @light-color;
+  padding: 1rem;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: @secondary-color;
+  }
+}
+
+.btn {
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid @accent-color;
+}
+
+.table tbody tr:hover {
+  background-color: lighten(@accent-color, 45%);
+}
+
+.hero-section {
+  background: linear-gradient(to right, @primary-color, @secondary-color);
+  color: #fff;
+  padding: 3rem;
+  text-align: center;
+}
+
+@media (max-width: 576px) {
+  .display-1 {
+    font-size: 2.5rem;
+  }
+}
+
+.card:hover {
+  border: 2px solid @accent-color;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+//Tara's part
 @light-blue: #d9ebff;
 @medium-blue: #007bff;
 @dark-blue:#164c8a;
@@ -56,5 +134,4 @@ nav{
     .navbar-brand{
         color:@navy-blue;
     }
-    
 }

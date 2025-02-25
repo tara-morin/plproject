@@ -5,6 +5,7 @@
 @gray: #f8f9fa;
 @secondary-gray: #6c757d;
 @accent-color: #ffb3b3;
+@accent-color2: #bd7171;
 
 @heading-font: 'Merriweather', serif;
 @body-font: 'Open Sans', sans-serif;
@@ -14,9 +15,15 @@
     color:@navy-blue;
 }
 
+footer{
+    p{
+        color:black !important;
+    }
+    
+}
 
 .day-count{
-    color: @accent-color;
+    color: @accent-color2;
 }
 body {
   font-family: @body-font;
@@ -33,13 +40,13 @@ h1, h2, h3 {
 nav{
     .navbar-nav{
         a{
-            color:@medium-blue;
+            color:@dark-blue;
         }
     }
     .navbar-brand{
-        color:@navy-blue;
+        color:@dark-blue;
         &:hover {
-            color: darken(@dark-blue, 10%);
+            color: lighten(@medium-blue, 30%);
             text-decoration: none;
           }
     }

@@ -19,7 +19,7 @@
       <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">StudyBuddy</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
@@ -38,7 +38,7 @@
       <!--row 1-->
       <div class="row d-flex justify-content-start">
         <div class="col-auto">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="img-fluid bi bi-person-circle ">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" role="img" aria-label="An empty profile picture slot." class="img-fluid bi bi-person-circle ">
             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
           </svg>
@@ -67,7 +67,7 @@
                       Enter a new username:
                         <form>
                           <div class="mb-3">
-                              <label for="username" class="form-label">Username</label>
+                              <label class="form-label">Username</label>
                               <input type="text" class="form-control" id="username" name="username" value="User 123" required>
                           </div>
                       </form>
@@ -107,8 +107,8 @@
     
             <div class="d-flex align-items-center">
                 <label class="form-check-label me-2" for="flexSwitchCheckDefault">School</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <div class="form-check form-switch" aria-labelledby="Mode">
+                    <input class="form-check-input" type="checkbox" role="switch" aria-labelledby="Mode"id="flexSwitchCheckDefault">
                 </div>
                 <label class="form-check-label ms-2" for="flexSwitchCheckDefault">Work</label> 
             </div>

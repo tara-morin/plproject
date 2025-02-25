@@ -48,9 +48,9 @@
 
           </div>
             <div class="col">
-              <h1 class="'lead">
+              <h1 class="lead" id="usernameDisplay">
                 User 123
-              </h3>
+              </h1>
             </div>
             <div class="col">
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -65,13 +65,16 @@
                     </div>
                     <div class="modal-body">
                       Enter a new username:
-                      <div class="controls">
-                        <input id="username" type="text" placeholder="..." autocomplete="off">
-                      </div>
+                        <form>
+                          <div class="mb-3">
+                              <label for="username" class="form-label">Username</label>
+                              <input type="text" class="form-control" id="username" name="username" value="User 123" required>
+                          </div>
+                      </form>
                     </div>
                     <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save</button>
                     </div>
                   </div>
                 </div>
@@ -89,7 +92,7 @@
               <h1 class="display-6 px-2">
                 Member for 
               </h1>
-              <h1 class="display-6 px-2"style="color:red">
+              <h1 class="display-6 px-2 day-count">
                 27
               </h1>
               <h1 class="display-6 px-2">

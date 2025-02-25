@@ -52,7 +52,7 @@ nav{
   }
 }
 
-.btn {
+Button, .btn {
     color:white;
     background-color: @dark-blue;
   transition: transform 0.2s ease-in-out;
@@ -91,15 +91,14 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-//Tara's part
-
 .list-group-item{
-    color: @navy-blue;
+    .coloring();
+    background-color: white;
 }
 
-.container-fluid{
-    gap: 20px;
-}
+// .container-fluid{
+//     gap: 20px;
+// }
 
 .third{
     background-color: #9e610d;
@@ -113,10 +112,21 @@ input:focus, select:focus, textarea:focus {
     }
 }
 
+.row{
+    min-height:20px;
+}
+
 .username{
     font-weight: bold;
     font-size: clamp(0.8rem, 2vw, 1.2rem); ;
     color:@medium-blue;
 }
 
+.img-fluid {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    min-width:20px;
+  }
+  
 

@@ -1,5 +1,6 @@
 <?php
-require_once "Database.php";
+require_once 'Config.php';
+require_once 'Database.php';
 
 class StudyWithMeController {
     private $db;
@@ -49,7 +50,7 @@ class StudyWithMeController {
             $errors[] = "Invalid status selected.";
         }
 
-        if (!empty($errors)) {
+        if (count($errors) > 0) {
             $_SESSION['errors'] = $errors;
             header("Location: index.php?command=welcome");
             exit();
@@ -60,7 +61,7 @@ class StudyWithMeController {
             "SELECT * FROM swm_users WHERE username = $1",
             $username
         );
-        if ($existing !== false && count($existing) > 0) {
+        if (count($existing) > 0) {
             // If user exists, verify password
             $row = $existing[0];
             if (!password_verify($password, $row['password'])) {
@@ -83,7 +84,7 @@ class StudyWithMeController {
                 $name, $username, $hashedPassword, $status
             );
 
-            if ($insertResult === false || count($insertResult) === 0) {
+            if (count($insertResult) === 0) {
                 $_SESSION['errors'] = ["Error creating user in database."];
                 header("Location: index.php?command=welcome");
                 exit();
@@ -152,7 +153,7 @@ class StudyWithMeController {
             $errors[] = "Time must be in hh:mm format (e.g. 1:30).";
         }
 
-        if (!empty($errors)) {
+        if (count($errors) > 0) {
             $_SESSION['task_errors'] = $errors;
             header("Location: index.php?command=showTasks");
             exit();
@@ -166,7 +167,7 @@ class StudyWithMeController {
             $_SESSION['user_id'], $title, $dueDate, $timeDecimal
         );
 
-        if ($res === false) {
+        if (count($res) == 0) {
             $_SESSION['task_errors'] = ["Database error inserting task."];
         }
 
@@ -187,7 +188,7 @@ class StudyWithMeController {
         $taskId    = $_POST['task_id'] ?? null;
         $completed = $_POST['completed'] ?? null;
 
-        if (!$taskId) {
+        if (count($taskId) == 0) {
             header("Location: index.php?command=showTasks");
             exit();
         }
@@ -215,7 +216,7 @@ class StudyWithMeController {
         }
 
         $taskId = $_POST['task_id'] ?? null;
-        if (!$taskId) {
+        if (count($taskId) == 0) {
             header("Location: index.php?command=showTasks");
             exit();
         }

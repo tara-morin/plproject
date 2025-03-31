@@ -14,6 +14,9 @@ $controller = new StudyWithMeController();
 $command = $_GET['command'] ?? 'welcome';
 
 switch ($command) {
+    case 'login':
+        include __DIR__ . '/views/login.php';
+        break;
     case 'welcome':
         $controller->showWelcome();
         break;

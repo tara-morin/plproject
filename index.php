@@ -15,11 +15,11 @@ $command = $_GET['command'] ?? 'welcome';
 
 switch ($command) {
     case 'login':
-        include __DIR__ . '/views/login.php';
+        $controller->login();
         break;
-    case 'welcome':
-        $controller->showWelcome();
-        break;
+    // case 'welcome':
+    //     $controller->showWelcome();
+    //     break;
     case 'create_profile':
         $controller->createProfile();
         break;
@@ -46,6 +46,6 @@ switch ($command) {
         $controller->logout();
         break;
     default:
-        $controller->showWelcome();
+        $controller->login();
         break;
 }

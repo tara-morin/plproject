@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Study With Me - Login</title>
+  <title>Sign Up for Study With Me</title>
   <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
     rel="stylesheet" 
@@ -13,7 +13,7 @@
 <div class="container my-5">
 
   <h1 class="text-center">Study With Me</h1>
-  <p class="text-center">Sign in or create a new account</p>
+  <p class="text-center">Sign Up for Study With Me</p>
 
   <?php
     // Display errors from session if any
@@ -26,29 +26,31 @@
         // Clear them out so they don't persist
         unset($_SESSION['errors']);
     }
-
-    if (isset($_SESSION['success']) && !empty($_SESSION['success'])) {
-      echo '<div class="alert alert-danger">';
-      $message= $_SESSION['success'];
-      echo "<p>$message</p>";
-      echo '</div>';
-      // Clear them out so they don't persist
-      unset($_SESSION['success']);
-  }
-
   ?>
 
   <form 
-    action="index.php?command=login" 
+    action="index.php?command=create_profile" 
     method="POST" 
     class="mx-auto my-4" 
     style="max-width: 400px;"
   >
-    <!-- This is the form  used for  sign-in logic only.
-          your controller handles by checking the DB for an existing username. -->
+    <!-- The same form is used for both sign-in and sign-up logic,
+         which your controller handles by checking the DB for an existing username. -->
 
     <div class="mb-3">
-      <label for="username" class="form-label">$username</label>
+      <label for="name" class="form-label">Full Name</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="name" 
+        name="name" 
+        placeholder="Jane Doe"
+        required
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Username (min 6 chars)</label>
       <input 
         type="text" 
         class="form-control" 
@@ -70,13 +72,30 @@
       >
     </div>
 
+    <div class="mb-3">
+      <label for="conf_password" class="form-label">Password</label>
+      <input 
+        type="password" 
+        class="form-control" 
+        id="conf_password" 
+        name="conf_password" 
+        required
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="status" class="form-label">Using StudyBuddy for</label>
+      <select class="form-select" id="status" name="status" required>
+        <option value="">-- Select One --</option>
+        <option value="school">School</option>
+        <option value="work">Work</option>
+      </select>
+    </div>
+
     <button type="submit" class="btn btn-primary w-100">
-      Login
+      Continue
     </button>
   </form>
-  <button type="submit" class="btn">
-    New to StudyWithMe? Sign up
-  </button>
 </div>
 
 <script 

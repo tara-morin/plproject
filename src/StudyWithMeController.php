@@ -13,26 +13,85 @@ class StudyWithMeController {
     }
 
     // 1. Show welcome (sign-up / login form)
-    public function showWelcome() {
-        include __DIR__ . '/../views/welcome.php';
-    }
+    // public function showWelcome() {
+    //     include __DIR__ . '/../views/welcome.php';
+    // }
 
-    // 2. Create profile (sign-up / login)
-    public function createProfile() {
+    // 2. Login
+    public function login() {
+        //display template if no POST information is avaliable
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?command=welcome");
+            include __DIR__ . '/../views/login.php';
             exit();
         }
-
-        $name     = trim($_POST['name'] ?? '');
+        else if (!isset($_POST["username"])){
+            include __DIR__ . '/../views/login.php';
+            exit();
+        }
+        
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
-        $status   = $_POST['status'] ?? '';
 
         // Example expression usage
         $minLength = 5 + 1; // 6
 
         // Validate
+        $errors = [];
+        if (strlen($username) < $minLength) {
+            $errors[] = "Username must be at least 6 characters.";
+        }
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
+            $errors[] = "Username can only contain letters, numbers, and underscores.";
+        }
+        if (strlen($password) === 0) {
+            $errors[] = "Password is required.";
+        }
+        if (!in_array($status, $this->allowedStatuses)) {
+            $errors[] = "Invalid status selected.";
+        }
+
+
+        // Check if user already exists
+        $existing = $this->db->query(
+            "SELECT * FROM swm_users WHERE username = $1",
+            $username
+        );
+        if (count($existing) > 0) {
+            // If user exists, verify password
+            $row = $existing[0];
+            if (!password_verify($password, $row['password'])) {
+                $_SESSION['errors'] = "Incorrect password for existing user.";
+                header("Location: index.php?command=login");
+                exit();
+            }
+            // Log them in
+            $_SESSION['user_id']  = $row['id'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['name']     = $row['name'];
+            $_SESSION['status']   = $row['status'];
+        }
+        else{
+            $_SESSION['errors'] = ["Account not found for this username."];
+        }
+        if (count($errors) > 0) {
+            $_SESSION['errors'] = $errors;
+            header("Location: index.php?command=login");
+            exit();
+        }
+        // Example second state mechanism (cookie)
+        setcookie('viewMode', 'light', time() + 3600);
+
+        header("Location: index.php?command=dashboard");
+    }
+
+    //3. if the user doesn't exist, let them make a profile
+    public function createProfile(){
+        $name     = trim($_POST['name'] ?? '');
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $conf_password = $_POST['conf_password'] ?? '';
+        $status   = $_POST['status'] ?? '';
+
         $errors = [];
         if (strlen($name) === 0) {
             $errors[] = "Name is required.";
@@ -49,61 +108,41 @@ class StudyWithMeController {
         if (!in_array($status, $this->allowedStatuses)) {
             $errors[] = "Invalid status selected.";
         }
+        if (strcmp($password, $conf_password)!=0){
+            $errors[] = "Passwords must match.";
+        }
 
         if (count($errors) > 0) {
             $_SESSION['errors'] = $errors;
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=create_profile");
+            exit();
+        }
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $insertResult = $this->db->query(
+            "INSERT INTO swm_users (name, username, password, status)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id",
+            $name, $username, $hashedPassword, $status
+        );
+
+        if (count($insertResult) === 0) {
+            $_SESSION['errors'] = ["Error creating user in database."];
+            header("Location: index.php?command=create_profile");
             exit();
         }
 
-        // Check if user already exists
-        $existing = $this->db->query(
-            "SELECT * FROM swm_users WHERE username = $1",
-            $username
-        );
-        if (count($existing) > 0) {
-            // If user exists, verify password
-            $row = $existing[0];
-            if (!password_verify($password, $row['password'])) {
-                $_SESSION['errors'] = ["Incorrect password for existing user."];
-                header("Location: index.php?command=welcome");
-                exit();
-            }
-            // Log them in
-            $_SESSION['user_id']  = $row['id'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['name']     = $row['name'];
-            $_SESSION['status']   = $row['status'];
-        } else {
-            // Create new user
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $insertResult = $this->db->query(
-                "INSERT INTO swm_users (name, username, password, status)
-                 VALUES ($1, $2, $3, $4)
-                 RETURNING id",
-                $name, $username, $hashedPassword, $status
-            );
+        // $newId = $insertResult[0]['id'];
+        // $_SESSION['user_id']  = $newId;
+        // $_SESSION['username'] = $username;
+        // $_SESSION['name']     = $name;
+        // $_SESSION['status']   = $status;
 
-            if (count($insertResult) === 0) {
-                $_SESSION['errors'] = ["Error creating user in database."];
-                header("Location: index.php?command=welcome");
-                exit();
-            }
-
-            $newId = $insertResult[0]['id'];
-            $_SESSION['user_id']  = $newId;
-            $_SESSION['username'] = $username;
-            $_SESSION['name']     = $name;
-            $_SESSION['status']   = $status;
-        }
-
-        // Example second state mechanism (cookie)
-        setcookie('viewMode', 'light', time() + 3600);
-
-        header("Location: index.php?command=dashboard");
+        $_SESSION['success']= "Profile successfully created!";
+        header("Location: index.php?command=login");
+        exit();
     }
 
-    // 3. Show dashboard
+    // 4. Show dashboard
     public function showDashboard() {
         if (!isset($_SESSION['user_id'])) {
             header("Location: index.php?command=welcome");
@@ -113,7 +152,7 @@ class StudyWithMeController {
         include __DIR__ . '/../views/index.html';
     }
 
-    // 4. Log out
+    // 5. Log out
     public function logout() {
         session_destroy();
         // Clear cookie
@@ -121,7 +160,7 @@ class StudyWithMeController {
         header("Location: index.php?command=welcome");
     }
 
-    // 5. Show tasks
+    // 6. Show tasks
     public function showTasks() {
         if (!isset($_SESSION['user_id'])) {
             header("Location: index.php?command=welcome");
@@ -130,7 +169,7 @@ class StudyWithMeController {
         include __DIR__ . '/../views/todo.html';
     }
 
-    // 6. Create Task
+    // 7. Create Task
     public function createTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: index.php?command=welcome");
@@ -174,7 +213,7 @@ class StudyWithMeController {
         header("Location: index.php?command=showTasks");
     }
 
-    // 7. Update Task
+    // 8. Update Task
     public function updateTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: index.php?command=welcome");
@@ -204,7 +243,7 @@ class StudyWithMeController {
         header("Location: index.php?command=showTasks");
     }
 
-    // 8. Delete Task
+    // 9. Delete Task
     public function deleteTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: index.php?command=welcome");
@@ -230,7 +269,7 @@ class StudyWithMeController {
         header("Location: index.php?command=showTasks");
     }
 
-    // 9. Return tasks in JSON
+    // 10. Return tasks in JSON
     public function getTasksJSON() {
         header("Content-Type: application/json");
 

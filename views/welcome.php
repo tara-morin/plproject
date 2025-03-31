@@ -26,7 +26,7 @@
   ?>
 
   <!-- Sign-up / Login Form -->
-  <form action="index.php?command=create_profile" method="POST" class="mt-4">
+  <form action="index.php?command=login" method="POST" class="mt-4">
     <div class="mb-3">
       <label for="name" class="form-label">Full Name</label>
       <input type="text" class="form-control" id="name" name="name" required>

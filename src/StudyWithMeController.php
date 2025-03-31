@@ -161,13 +161,13 @@ class StudyWithMeController {
         session_destroy();
         // Clear cookie
         setcookie('viewMode', '', time() - 3600);
-        header("Location: index.php?command=welcome");
+        header("Location: index.php?command=login");
     }
 
     // 6. Show tasks
     public function showTasks() {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
         include __DIR__ . '/../views/todo.html';
@@ -176,11 +176,11 @@ class StudyWithMeController {
     // 7. Create Task
     public function createTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
 
@@ -220,11 +220,11 @@ class StudyWithMeController {
     // 8. Update Task
     public function updateTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
 
@@ -250,11 +250,11 @@ class StudyWithMeController {
     // 9. Delete Task
     public function deleteTask() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
 

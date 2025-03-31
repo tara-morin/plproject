@@ -1,3 +1,8 @@
+<?php
+// File: views/focus.php
+// This view displays the Focus page.
+// (Assumes that any necessary session checks have already been done in the controller.)
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +30,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">StudyBuddy</a>
+      <a class="navbar-brand" href="index.php?command=dashboard">StudyBuddy</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
               data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" 
               aria-expanded="false" aria-label="Toggle navigation">
@@ -33,11 +38,11 @@
       </button>
       <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link" href="index.html">Home</a>
-          <a class="nav-link active" aria-current="page" href="focus.html">Focus</a>
-          <a class="nav-link" href="todo.html">Plan</a>
-          <a class="nav-link" href="#">Chat</a>
-          <a class="nav-link" href="profile.html">Profile</a>
+          <a class="nav-link" href="index.php?command=dashboard">Home</a>
+          <a class="nav-link active" aria-current="page" href="index.php?command=focus">Focus</a>
+          <a class="nav-link" href="index.php?command=showTasks">Plan</a>
+          <a class="nav-link" href="index.php?command=chat">Chat</a>
+          <a class="nav-link" href="index.php?command=profile">Profile</a>
         </div>
       </div>
     </div>
@@ -57,7 +62,7 @@
     </button>
     
     <!-- Save & Return Home Button -->
-    <a href="index.html" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" 
+    <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" 
        title="Save progress and return home">
       Save Progress &amp; Return Home
     </a>
@@ -67,8 +72,7 @@
   <footer class="footer p-2 text-center">
     <p>&copy; 2025 CS4640</p>
   </footer>
-
-
 </body>
 </html>
+
 

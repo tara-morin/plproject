@@ -72,8 +72,8 @@ class StudyWithMeController {
         }
         if (count($errors) > 0) {
             $_SESSION['errors'] = $errors;
-            unsset($_SESSION['username']);
-            unsset($_SESSION['password']);
+            unset($_SESSION['username']);
+            unset($_SESSION['password']);
             header("Location: index.php?command=login");
             exit();
         }
@@ -100,7 +100,7 @@ class StudyWithMeController {
         if (strlen($name) === 0) {
             $errors[] = "Name is required.";
         }
-        if (strlen($username) < $minLength) {
+        if (strlen($username) < 6) {
             $errors[] = "Username must be at least 6 characters.";
         }
         if (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
@@ -156,6 +156,27 @@ class StudyWithMeController {
         include __DIR__ . '/../views/index.html';
     }
 
+    public function showFocus() {
+        // Check if the user is logged in. If not, redirect to login.
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: index.php?command=login");
+            exit();
+        }
+        // Include the focus view
+        include __DIR__ . '/../views/focus.php';
+    }
+    
+    public function showProfile() {
+        // Check for a valid session; if not, redirect to login.
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: index.php?command=login");
+            exit();
+        }
+        // Include the profile view
+        include __DIR__ . '/../views/profile.php';
+    }
+    
+
     // 5. Log out
     public function logout() {
         session_destroy();
@@ -170,7 +191,7 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
-        include __DIR__ . '/../views/todo.html';
+        include __DIR__ . '/../views/todo.php';
     }
 
     // 7. Create Task

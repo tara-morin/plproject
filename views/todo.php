@@ -1,3 +1,7 @@
+<?php
+// File: views/todo.php
+// (Assumes that any required session validation has been done in the controller.)
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +29,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">StudyBuddy</a>
+      <a class="navbar-brand" href="index.php?command=dashboard">StudyBuddy</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
               data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" 
               aria-expanded="false" aria-label="Toggle navigation">
@@ -33,11 +37,11 @@
       </button>
       <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link" href="index.html">Home</a>
-          <a class="nav-link" href="focus.html">Focus</a>
-          <a class="nav-link active" aria-current="page" href="todo.html">Plan</a>
-          <a class="nav-link" href="#">Chat</a>
-          <a class="nav-link" href="profile.html">Profile</a>
+          <a class="nav-link" href="index.php?command=dashboard">Home</a>
+          <a class="nav-link" href="index.php?command=focus">Focus</a>
+          <a class="nav-link active" aria-current="page" href="index.php?command=showTasks">Plan</a>
+          <a class="nav-link" href="index.php?command=chat">Chat</a>
+          <a class="nav-link" href="index.php?command=profile">Profile</a>
         </div>
       </div>
     </div>
@@ -86,7 +90,7 @@
           <td>Sprint 1</td>
           <td>2:30 so far</td>
           <td>
-            <a href="focus.html" class="btn btn-success">FOCUS</a>
+            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
           </td>
         </tr>
         <tr>
@@ -94,7 +98,7 @@
           <td>Essay</td>
           <td>1:15 so far</td>
           <td>
-            <a href="focus.html" class="btn btn-success">FOCUS</a>
+            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
           </td>
         </tr>
         <tr>
@@ -102,7 +106,7 @@
           <td>Lab 3</td>
           <td>0:27 so far</td>
           <td>
-            <a href="focus.html" class="btn btn-success">FOCUS</a>
+            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
           </td>
         </tr>
       </tbody>
@@ -140,7 +144,7 @@
               <div class="mb-3">
                 <label for="timeSpent" class="form-label">Time Spent (hh:mm)</label>
                 <input type="text" class="form-control" id="timeSpent" 
-                       placeholder="e.g. 0:30" pattern="^\\d{1,2}:\\d{2}$">
+                       placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
               </div>
             </fieldset>
           </form>

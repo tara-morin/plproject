@@ -26,6 +26,12 @@ switch ($command) {
     case 'dashboard':
         $controller->showDashboard();
         break;
+    case 'focus':
+        $controller->showFocus();
+        break;
+    case 'profile':
+        $controller->showProfile();
+        break;
     case 'showTasks':
         $controller->showTasks();
         break;

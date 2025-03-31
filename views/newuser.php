@@ -73,9 +73,9 @@
     </div>
 
     <div class="mb-3">
-      <label for="conf_password" class="form-label">Password</label>
+      <label for="conf_password" class="form-label">Confirm your Password</label>
       <input 
-        type="password" 
+        type="password"
         class="form-control" 
         id="conf_password" 
         name="conf_password" 

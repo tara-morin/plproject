@@ -48,7 +48,7 @@
           your controller handles by checking the DB for an existing username. -->
 
     <div class="mb-3">
-      <label for="username" class="form-label">$username</label>
+      <label for="username" class="form-label">Username</label>
       <input 
         type="text" 
         class="form-control" 
@@ -74,9 +74,9 @@
       Login
     </button>
   </form>
-  <button type="submit" class="btn">
+  <a href="index.php?command=create_profile" class="btn">
     New to StudyWithMe? Sign up
-  </button>
+</a>
 </div>
 
 <script 

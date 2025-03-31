@@ -21,7 +21,17 @@ class Database {
         $password = Config::$db["pass"];
         $port = Config::$db["port"];
 
-        $this->dbConnector = pg_connect("host=$host port=$port dbname=$database user=$user password=$password");
+        if ($this->dbConnector==null){
+        $dbConnector = pg_connect("host=$host port=$port dbname=$database user=$user password=$password");
+        if (!$dbConnector==FALSE){
+            $this->dbConnector= $dbConnector;
+            // require_once 'init_db.php';
+            // echo "just made database";
+        }
+        else{
+            echo "connection failed";
+        }
+    }
     }
 
     /**

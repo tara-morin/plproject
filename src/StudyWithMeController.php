@@ -46,9 +46,6 @@ class StudyWithMeController {
         if (strlen($password) === 0) {
             $errors[] = "Password is required.";
         }
-        if (!in_array($status, $this->allowedStatuses)) {
-            $errors[] = "Invalid status selected.";
-        }
 
 
         // Check if user already exists
@@ -75,6 +72,8 @@ class StudyWithMeController {
         }
         if (count($errors) > 0) {
             $_SESSION['errors'] = $errors;
+            unsset($_SESSION['username']);
+            unsset($_SESSION['password']);
             header("Location: index.php?command=login");
             exit();
         }
@@ -86,6 +85,11 @@ class StudyWithMeController {
 
     //3. if the user doesn't exist, let them make a profile
     public function createProfile(){
+        //if the post variables aren't set, it means the user is loading this page for the first time. 
+        if (!isset($_POST["username"]) && !isset($_POST["conf_password"])){
+            include __DIR__ . '/../views/newuser.php';
+            exit();
+        }
         $name     = trim($_POST['name'] ?? '');
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';

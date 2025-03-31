@@ -1,6 +1,6 @@
 <?php
 // File: views/todo.php
-// (Assumes that any required session validation has been done in the controller.)
+// This view assumes that the controller has set $tasks as an array of tasks for the logged-in user.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,14 +67,14 @@
         </ul>
       </div>
 
-      <!-- New Task Button triggers a modal -->
+      <!-- New Task Button triggers the creation modal -->
       <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" 
               data-bs-target="#newTaskModal">
         New Task
       </button>
     </div>
 
-    <!-- Example Task List (using a Bootstrap table) -->
+    <!-- Task List Table -->
     <table class="table table-striped table-responsive">
       <thead>
         <tr>
@@ -82,33 +82,90 @@
           <th scope="col">Task</th>
           <th scope="col">Time Spent</th>
           <th scope="col">Focus</th>
+          <th scope="col">Update</th>
+          <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>in 2 days</td>
-          <td>Sprint 1</td>
-          <td>2:30 so far</td>
-          <td>
-            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
-          </td>
-        </tr>
-        <tr>
-          <td>in 4 days</td>
-          <td>Essay</td>
-          <td>1:15 so far</td>
-          <td>
-            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
-          </td>
-        </tr>
-        <tr>
-          <td>in 6 days</td>
-          <td>Lab 3</td>
-          <td>0:27 so far</td>
-          <td>
-            <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
-          </td>
-        </tr>
+        <?php if (!empty($tasks)): ?>
+          <?php foreach ($tasks as $task): ?>
+            <tr>
+              <td><?php echo htmlspecialchars($task['due_date']); ?></td>
+              <td><?php echo htmlspecialchars($task['title']); ?></td>
+              <!-- Updated to use the controller's static formatTime function -->
+              <td><?php echo StudyWithMeController::formatTime($task['time_spent']); ?></td>
+              <td>
+                <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
+              </td>
+              <td>
+                <!-- Update button that triggers the modal -->
+                <button type="button" class="btn btn-warning btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#updateTaskModal_<?php echo $task['id']; ?>">
+                  Update
+                </button>
+              </td>
+              <td>
+                <!-- Delete form -->
+                <form action="index.php?command=deleteTask" method="POST" 
+                      onsubmit="return confirm('Are you sure you want to delete this task?');">
+                  <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id']); ?>">
+                  <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+              </td>
+            </tr>
+
+            <!-- Update Task Modal for this task -->
+            <div class="modal fade" id="updateTaskModal_<?php echo $task['id']; ?>" tabindex="-1" 
+                 aria-labelledby="updateTaskModalLabel_<?php echo $task['id']; ?>" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form action="index.php?command=updateTask" method="POST">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="updateTaskModalLabel_<?php echo $task['id']; ?>">Update Task</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id']); ?>">
+                      <div class="mb-3">
+                        <label for="title_<?php echo $task['id']; ?>" class="form-label">Task Name</label>
+                        <input type="text" class="form-control" id="title_<?php echo $task['id']; ?>" 
+                               name="title" value="<?php echo htmlspecialchars($task['title']); ?>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="due_date_<?php echo $task['id']; ?>" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="due_date_<?php echo $task['id']; ?>" 
+                               name="due_date" value="<?php echo htmlspecialchars($task['due_date']); ?>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="time_spent_<?php echo $task['id']; ?>" class="form-label">Time Spent (hh:mm)</label>
+                        <input type="text" class="form-control" id="time_spent_<?php echo $task['id']; ?>" 
+                               name="time_spent" value="<?php echo StudyWithMeController::formatTime($task['time_spent']); ?>" 
+                               placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="completed" 
+                               id="completed_<?php echo $task['id']; ?>"
+                               <?php echo ($task['completed'] === 't' || $task['completed'] === true) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="completed_<?php echo $task['id']; ?>">
+                          Completed
+                        </label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-primary">Update Task</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr>
+            <td colspan="6" class="text-center">No tasks found.</td>
+          </tr>
+        <?php endif; ?>
       </tbody>
     </table>
   </main>
@@ -118,45 +175,32 @@
        aria-hidden="true" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
-        
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="newTaskModalLabel">Add a New Task</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                  aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        
         <div class="modal-body">
-          <form>
+          <form action="index.php?command=createTask" method="POST">
             <fieldset>
               <legend class="visually-hidden">Create a new task</legend>
-              
               <div class="mb-3">
-                <label for="taskName" class="form-label">Task Name</label>
-                <input type="text" class="form-control" id="taskName" 
-                       placeholder="e.g. Read Chapter 2" required>
+                <label for="title" class="form-label">Task Name</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="e.g. Read Chapter 2" required>
               </div>
-              
               <div class="mb-3">
-                <label for="dueDate" class="form-label">Due Date</label>
-                <input type="date" class="form-control" id="dueDate" required>
+                <label for="due_date" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="due_date" name="due_date" required>
               </div>
-              
               <div class="mb-3">
-                <label for="timeSpent" class="form-label">Time Spent (hh:mm)</label>
-                <input type="text" class="form-control" id="timeSpent" 
-                       placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
+                <label for="time_spent" class="form-label">Time Spent (hh:mm)</label>
+                <input type="text" class="form-control" id="time_spent" name="time_spent" placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
               </div>
             </fieldset>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Add Task</button>
+            </div>
           </form>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary">
-            Add Task
-          </button>
         </div>
       </div>
     </div>
@@ -166,5 +210,10 @@
   <footer class="foot footer p-2 text-center">
     <p>&copy; 2025</p>
   </footer>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+          crossorigin="anonymous"></script>
 </body>
 </html>

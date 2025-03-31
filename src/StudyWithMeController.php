@@ -12,19 +12,13 @@ class StudyWithMeController {
         $this->db = new Database();
     }
 
-    // 1. Show welcome (sign-up / login form)
-    // public function showWelcome() {
-    //     include __DIR__ . '/../views/welcome.php';
-    // }
-
     // 2. Login
     public function login() {
-        //display template if no POST information is avaliable
+        // Display template if no POST information is available
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             include __DIR__ . '/../views/login.php';
             exit();
-        }
-        else if (!isset($_POST["username"])){
+        } else if (!isset($_POST["username"])) {
             include __DIR__ . '/../views/login.php';
             exit();
         }
@@ -47,7 +41,6 @@ class StudyWithMeController {
             $errors[] = "Password is required.";
         }
 
-
         // Check if user already exists
         $existing = $this->db->query(
             "SELECT * FROM swm_users WHERE username = $1",
@@ -66,8 +59,7 @@ class StudyWithMeController {
             $_SESSION['username'] = $row['username'];
             $_SESSION['name']     = $row['name'];
             $_SESSION['status']   = $row['status'];
-        }
-        else{
+        } else {
             $_SESSION['errors'] = ["Account not found for this username."];
         }
         if (count($errors) > 0) {
@@ -83,18 +75,18 @@ class StudyWithMeController {
         header("Location: index.php?command=dashboard");
     }
 
-    //3. if the user doesn't exist, let them make a profile
+    // 3. If the user doesn't exist, let them make a profile
     public function createProfile(){
-        //if the post variables aren't set, it means the user is loading this page for the first time. 
+        // If the post variables aren't set, load the new user form
         if (!isset($_POST["username"]) && !isset($_POST["conf_password"])){
             include __DIR__ . '/../views/newuser.php';
             exit();
         }
-        $name     = trim($_POST['name'] ?? '');
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $name          = trim($_POST['name'] ?? '');
+        $username      = trim($_POST['username'] ?? '');
+        $password      = $_POST['password'] ?? '';
         $conf_password = $_POST['conf_password'] ?? '';
-        $status   = $_POST['status'] ?? '';
+        $status        = $_POST['status'] ?? '';
 
         $errors = [];
         if (strlen($name) === 0) {
@@ -112,7 +104,7 @@ class StudyWithMeController {
         if (!in_array($status, $this->allowedStatuses)) {
             $errors[] = "Invalid status selected.";
         }
-        if (strcmp($password, $conf_password)!=0){
+        if (strcmp($password, $conf_password) != 0){
             $errors[] = "Passwords must match.";
         }
 
@@ -124,8 +116,8 @@ class StudyWithMeController {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $insertResult = $this->db->query(
             "INSERT INTO swm_users (name, username, password, status)
-            VALUES ($1, $2, $3, $4)
-            RETURNING id",
+             VALUES ($1, $2, $3, $4)
+             RETURNING id",
             $name, $username, $hashedPassword, $status
         );
 
@@ -135,13 +127,7 @@ class StudyWithMeController {
             exit();
         }
 
-        // $newId = $insertResult[0]['id'];
-        // $_SESSION['user_id']  = $newId;
-        // $_SESSION['username'] = $username;
-        // $_SESSION['name']     = $name;
-        // $_SESSION['status']   = $status;
-
-        $_SESSION['success']= "Profile successfully created!";
+        $_SESSION['success'] = "Profile successfully created!";
         header("Location: index.php?command=login");
         exit();
     }
@@ -152,35 +138,28 @@ class StudyWithMeController {
             header("Location: index.php?command=welcome");
             exit();
         }
-        // Show your existing index.html as the "dashboard"
         include __DIR__ . '/../views/index.html';
     }
 
     public function showFocus() {
-        // Check if the user is logged in. If not, redirect to login.
         if (!isset($_SESSION['user_id'])) {
             header("Location: index.php?command=login");
             exit();
         }
-        // Include the focus view
         include __DIR__ . '/../views/focus.php';
     }
     
     public function showProfile() {
-        // Check for a valid session; if not, redirect to login.
         if (!isset($_SESSION['user_id'])) {
             header("Location: index.php?command=login");
             exit();
         }
-        // Include the profile view
         include __DIR__ . '/../views/profile.php';
     }
     
-
     // 5. Log out
     public function logout() {
         session_destroy();
-        // Clear cookie
         setcookie('viewMode', '', time() - 3600);
         header("Location: index.php?command=login");
     }
@@ -191,6 +170,10 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
+        $tasks = $this->db->query(
+            "SELECT * FROM swm_tasks WHERE user_id = $1 ORDER BY created_at DESC",
+            $_SESSION['user_id']
+        );
         include __DIR__ . '/../views/todo.php';
     }
 
@@ -248,24 +231,29 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
-
-        $taskId    = $_POST['task_id'] ?? null;
-        $completed = $_POST['completed'] ?? null;
-
-        if (count($taskId) == 0) {
+    
+        $taskId = $_POST['task_id'] ?? null;
+        if (empty($taskId)) {
             header("Location: index.php?command=showTasks");
             exit();
         }
-
-        $isCompleted = ($completed === 'on') ? 'TRUE' : 'FALSE';
+    
+        $title   = trim($_POST['title'] ?? '');
+        $dueDate = $_POST['due_date'] ?? '';
+    
+        // Determine completed status from the checkbox.
+        $completed = (isset($_POST['completed']) && $_POST['completed'] === 'on') ? 'TRUE' : 'FALSE';
+    
+        // Update the task in the database with new values.
         $this->db->query(
             "UPDATE swm_tasks
-             SET completed = $1
-             WHERE id = $2 AND user_id = $3",
-            $isCompleted, $taskId, $_SESSION['user_id']
+             SET title = $1, due_date = $2, completed = $3
+             WHERE id = $4 AND user_id = $5",
+            $title, $dueDate, $completed, $taskId, $_SESSION['user_id']
         );
-
+    
         header("Location: index.php?command=showTasks");
+        exit();
     }
 
     // 9. Delete Task
@@ -280,7 +268,7 @@ class StudyWithMeController {
         }
 
         $taskId = $_POST['task_id'] ?? null;
-        if (count($taskId) == 0) {
+        if (empty($taskId)) {
             header("Location: index.php?command=showTasks");
             exit();
         }
@@ -321,4 +309,13 @@ class StudyWithMeController {
         list($hh, $mm) = explode(':', $timeString);
         return (float)$hh + ((float)$mm / 60.0);
     }
+
+    // Helper function: convert decimal hours to "H:MM" format.
+    public static function formatTime($hours) {
+        $totalMinutes = round($hours * 60);
+        $h = floor($totalMinutes / 60);
+        $m = $totalMinutes % 60;
+        return $h . ':' . str_pad($m, 2, '0', STR_PAD_LEFT);
+    }
 }
+

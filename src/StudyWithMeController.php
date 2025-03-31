@@ -135,10 +135,15 @@ class StudyWithMeController {
     // 4. Show dashboard
     public function showDashboard() {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?command=welcome");
+            header("Location: index.php?command=login");
             exit();
         }
-        include __DIR__ . '/../views/index.html';
+        // Show your existing index.html as the "dashboard"
+        include __DIR__ . '/../views/home.php';
+        $study_today= $this->getStudyTime();
+        $next_task= $this->getNextTask();
+        $task_info= json_decode($next_task,true);
+        $title = $task_info['title'];
     }
 
     public function showFocus() {
@@ -310,12 +315,83 @@ class StudyWithMeController {
         return (float)$hh + ((float)$mm / 60.0);
     }
 
-    // Helper function: convert decimal hours to "H:MM" format.
-    public static function formatTime($hours) {
-        $totalMinutes = round($hours * 60);
-        $h = floor($totalMinutes / 60);
-        $m = $totalMinutes % 60;
-        return $h . ':' . str_pad($m, 2, '0', STR_PAD_LEFT);
+    private function getStudyTime(){
+        //get the date
+        $currentDate = date('Y-m-d'); // Format: YYYY-MM-DD
+    
+        // Step 2: Get the user ID from the session
+        $userId = $_SESSION["user_id"];
+    
+        //get all sessions for the current user, if it was today
+        $query = "
+            SELECT start_time, end_time
+            FROM swm_sessions
+            WHERE user_id = $1
+            AND DATE(start_time) = $2
+            AND session_type = 'focus';
+        ";
+    
+        //query
+        $result = $this->db->query($query, $_SESSION["user_id"], $currentDate);
+    
+        //instantiate study time
+        $studyTime= 0.0;
+    
+       foreach($result as $row) {
+            $startTime = strtotime($row['start_time']);
+            $endTime = strtotime($row['end_time']);
+    
+            //add each to total
+            if ($startTime && $endTime) {
+                $sessionDurationInSeconds = $endTime - $startTime;  // Duration in seconds
+                $studyTimeInHours += $sessionDurationInSeconds / 3600;  // Convert duration to hours and add to total
+            }
+        }
+    
+        // Convert total study time from hours to hours and minutes
+        $hours = floor($studyTimeInHours); 
+        $minutes = round(($studyTimeInHours - $hours) * 60); 
+        $studyTime= $hours . ' hours ' . $minutes . ' minutes';
+        return $studyTime;
     }
-}
+    
 
+    private function getNextTask(){
+    
+        $query = "
+            SELECT id, title, due_date, time_spent
+            FROM swm_tasks
+            WHERE user_id = $1
+            AND completed = FALSE
+            ORDER BY due_date ASC
+        ";
+    
+        // Prepare the query using PDO
+        $tasks= $this->db->query($query, $_SESSION["user_id"]);
+    
+        if ($tasks) {
+            // Step 4: Find the soonest due date
+            $soonestDueDate = $tasks[0]['due_date'];
+    
+            // Step 5: Filter all tasks that have the same soonest due date
+            $sameDueDateTasks = array_filter($tasks, function($task) use ($soonestDueDate) {
+                return $task['due_date'] == $soonestDueDate;
+            });
+    
+            // Step 6: Sort the tasks with the same due date by time spent (ascending)
+            usort($sameDueDateTasks, function($a, $b) {
+                return $a['time_spent'] <=> $b['time_spent'];
+            });
+    
+            // Step 7: Encode the task with the least time spent into JSON
+            $taskData = json_encode($sameDueDateTasks[0]);
+    
+            // Step 8: Return the task data
+            return $taskData;
+        } else {
+            // If no tasks are found, return an empty response
+            return json_encode([]);
+        }
+    }
+    
+}

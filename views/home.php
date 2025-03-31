@@ -25,7 +25,7 @@
      </button>
      <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
        <div class="navbar-nav">
-         <a class="nav-link " aria-current="page" href="index.html">Home</a>
+         <a class="nav-link " aria-current="page" href="index.php/?command=dashboard">Home</a>
          <a class="nav-link" href="focus.html">Focus</a>
          <a class="nav-link" href="todo.html">Plan</a>
          <a class="nav-link">Chat</a>
@@ -37,7 +37,7 @@
  
    <div class="container-fluid text-center">
      <h1 class="display-1 p-2 g-col-6">
-       Welcome
+       Welcome,<? $_SESSION["name"]?>
      </h1>
      <div class="row">
         <div class="col-md-6 p-3">
@@ -80,9 +80,7 @@
         <div class="p-2 g-col-6 text-body-secondary">
             You have studied 
           </div>
-          <div class="lead">
-            2 hours, 27 minutes
-          </div>
+          <div class="lead"><? $study_today?></div>
           <div class="p-2 g-col-6 text-body-secondary">
             today.
           </div>
@@ -93,9 +91,7 @@
         <h1 class="display-5 g-col-6">
             Next Task to do:
         </h1>
-        <div class="g-col-6">
-            Study for math test
-        </div>
+        <div class="g-col-6"><? $task_title?></div>
         <a class="btn btn-primary g-col-6" style='float:right' href="focus.html" role="button">Focus</a>
     </div>
      </div>

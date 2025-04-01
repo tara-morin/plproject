@@ -54,6 +54,9 @@ switch ($command) {
     case 'logout':
         $controller->logout();
         break;
+    case 'setUsername':
+        $controller->setUsername();
+        break;
     default:
         $controller->login();
         break;

@@ -138,12 +138,12 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
-        // Show your existing index.html as the "dashboard"
-        include __DIR__ . '/../views/home.php';
+        
         $study_today= $this->getStudyTime();
         $next_task= $this->getNextTask();
         $task_info= json_decode($next_task,true);
-        $title = $task_info['title'];
+        $task_title = $task_info['title']?? 'No upcoming task';
+        include __DIR__ . '/../views/home.php';
     }
 
     public function showFocus() {
@@ -151,6 +151,11 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
+        $task_data = $_GET['task_data'] ?? null;
+    
+    if ($task_data) {
+        $task_info = json_decode(urldecode($task_data), true);
+    }
         include __DIR__ . '/../views/focus.php';
     }
     
@@ -159,6 +164,7 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
+        
         include __DIR__ . '/../views/profile.php';
     }
     
@@ -245,16 +251,16 @@ class StudyWithMeController {
     
         $title   = trim($_POST['title'] ?? '');
         $dueDate = $_POST['due_date'] ?? '';
-    
+        $time_spent= $this->convertTimeToHours($_POST['time_spent']);
         // Determine completed status from the checkbox.
         $completed = (isset($_POST['completed']) && $_POST['completed'] === 'on') ? 'TRUE' : 'FALSE';
     
         // Update the task in the database with new values.
         $this->db->query(
             "UPDATE swm_tasks
-             SET title = $1, due_date = $2, completed = $3
-             WHERE id = $4 AND user_id = $5",
-            $title, $dueDate, $completed, $taskId, $_SESSION['user_id']
+             SET title = $1, due_date = $2, completed = $3, time_spent= $4
+             WHERE id = $5 AND user_id = $6",
+            $title, $dueDate, $completed, $time_spent, $taskId, $_SESSION['user_id']
         );
     
         header("Location: index.php?command=showTasks");
@@ -345,14 +351,19 @@ class StudyWithMeController {
             if ($startTime && $endTime) {
                 $sessionDurationInSeconds = $endTime - $startTime;  // Duration in seconds
                 $studyTimeInHours += $sessionDurationInSeconds / 3600;  // Convert duration to hours and add to total
+                // Convert total study time from hours to hours and minutes
+                $studyTime= $this->formatTime($studyTimeInHours);
+                return $studyTime;
             }
         }
-    
-        // Convert total study time from hours to hours and minutes
-        $hours = floor($studyTimeInHours); 
-        $minutes = round(($studyTimeInHours - $hours) * 60); 
-        $studyTime= $hours . ' hours ' . $minutes . ' minutes';
-        return $studyTime;
+        
+    }
+
+    public function formatTime($timespent){
+        $hours = floor($timespent); 
+        $minutes = round(($timespent - $hours) * 60); 
+        $Time= $hours . ' hours ' . $minutes . ' minutes';
+        return $Time;
     }
     
 
@@ -385,13 +396,21 @@ class StudyWithMeController {
     
             // Step 7: Encode the task with the least time spent into JSON
             $taskData = json_encode($sameDueDateTasks[0]);
-    
             // Step 8: Return the task data
             return $taskData;
         } else {
             // If no tasks are found, return an empty response
             return json_encode([]);
         }
+    }
+
+    public function setUsername(){
+        $new_username= trim($_POST["username"]);
+        $query= "UPDATE swm_users SET username = $1 WHERE id = $2";
+        $this->db->query($query, $new_username, $_SESSION["user_id"]);
+        $username= $new_username;
+        $_SESSION["username"]= $new_username;
+        header("Location: index.php?command=profile");
     }
     
 }

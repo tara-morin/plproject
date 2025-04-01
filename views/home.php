@@ -24,20 +24,20 @@
        <span class="navbar-toggler-icon"></span>
      </button>
      <div class="navbar-collapse collapse" id="navbarNavAltMarkup">
-       <div class="navbar-nav">
-         <a class="nav-link " aria-current="page" href="index.php/?command=dashboard">Home</a>
-         <a class="nav-link" href="focus.html">Focus</a>
-         <a class="nav-link" href="todo.html">Plan</a>
-         <a class="nav-link">Chat</a>
-         <a class="nav-link" href="profile.html">Profile</a>
-       </div>
+     <div class="navbar-nav">
+              <a class="nav-link" aria-current="page" href="index.php?command=dashboard">Home</a>
+              <a class="nav-link" href="index.php?command=focus">Focus</a>
+              <a class="nav-link" href="index.php?command=showTasks">Plan</a>
+              <a class="nav-link" href="index.php?command=chat">Chat</a>
+              <a class="nav-link active" href="index.php?command=profile">Profile</a>
+          </div>
      </div>
    </div>
  </nav>
  
    <div class="container-fluid text-center">
      <h1 class="display-1 p-2 g-col-6">
-       Welcome,<? $_SESSION["name"]?>
+       Welcome,<?php echo $_SESSION["name"]?>
      </h1>
      <div class="row">
         <div class="col-md-6 p-3">
@@ -80,9 +80,9 @@
         <div class="p-2 g-col-6 text-body-secondary">
             You have studied 
           </div>
-          <div class="lead"><? $study_today?></div>
+          <div class="lead"><?php echo $study_today?></div>
           <div class="p-2 g-col-6 text-body-secondary">
-            today.
+            today through StudyWithMe.
           </div>
     </div>
        
@@ -91,8 +91,8 @@
         <h1 class="display-5 g-col-6">
             Next Task to do:
         </h1>
-        <div class="g-col-6"><? $task_title?></div>
-        <a class="btn btn-primary g-col-6" style='float:right' href="focus.html" role="button">Focus</a>
+        <div class="g-col-6"><?php echo $task_title?> </div>
+        <a class="btn btn-primary g-col-6" style='float:right' href="index.php?command=focus&task_data=<?= urlencode($next_task) ?>" role="button">Focus</a>
     </div>
      </div>
     

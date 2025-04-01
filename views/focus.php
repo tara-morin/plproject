@@ -54,7 +54,7 @@
     <h1 class="display-1" id="timer" aria-live="polite">15:42</h1>
     
     <!-- Current Task -->
-    <h2 class="lead" id="currentTask">Read Chapter 2</h2>
+    <h2 class="lead" id="currentTask"><?= htmlspecialchars($task_info['title'])?></h2>
     
     <!-- Pause Button -->
     <button class="btn btn-secondary btn-lg m-3" id="pauseBtn" title="Pause the timer">
@@ -74,5 +74,3 @@
   </footer>
 </body>
 </html>
-
-

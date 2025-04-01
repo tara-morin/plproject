@@ -78,7 +78,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                                 </div>
                                 <div class="modal-body">
                                     Enter a new username:
-                                    <form>
+                                    <form action= "index.php/?command=setUsername" method="POST" >
                                         <div class="mb-3">
                                             <label class="form-label">Username</label>
                                             <input type="text" class="form-control" id="username" name="username" 
@@ -87,7 +87,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+                                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>

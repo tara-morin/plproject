@@ -155,7 +155,12 @@ class StudyWithMeController {
     
     if ($task_data) {
         $task_info = json_decode(urldecode($task_data), true);
+        $_SESSION["task_info"]= $task_info;
     }
+    else if (isset($_SESSION["task_info"])){
+        $task_info= $_SESSION["task_info"];
+    }
+
         include __DIR__ . '/../views/focus.php';
     }
     

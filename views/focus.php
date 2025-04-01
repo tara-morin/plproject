@@ -3,6 +3,7 @@
 // This view displays the Focus page.
 // (Assumes that any necessary session checks have already been done in the controller.)
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,22 +51,28 @@
 
   <!-- Main Focus Container -->
   <main class="container text-center my-5">
-    <!-- Big Timer Display -->
-    <h1 class="display-1" id="timer" aria-live="polite">15:42</h1>
-    
-    <!-- Current Task -->
-    <h2 class="lead" id="currentTask"><?= htmlspecialchars($task_info['title'])?></h2>
-    
-    <!-- Pause Button -->
-    <button class="btn btn-secondary btn-lg m-3" id="pauseBtn" title="Pause the timer">
-      Pause
-    </button>
-    
-    <!-- Save & Return Home Button -->
-    <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" 
-       title="Save progress and return home">
-      Save Progress &amp; Return Home
-    </a>
+    <?php if (isset($task_info) && !empty($task_info)): ?>
+      <!-- If task info is available, show the regular focus page -->
+      <h1 class="display-1" id="timer" aria-live="polite">15:42</h1>
+      
+      <h2 class="lead" id="currentTask"><?= htmlspecialchars($task_info['title']) ?></h2>
+      
+      <button class="btn btn-secondary btn-lg m-3" id="pauseBtn" title="Pause the timer">
+        Pause
+      </button>
+      
+      <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" 
+         title="Save progress and return home">
+        Save Progress &amp; Return Home
+      </a>
+    <?php else: ?>
+      <!-- If task info is not available, show a message -->
+      <h2 class="lead">No task selected. Please pick a task to focus on.</h2>
+      
+      <a href="index.php?command=showTasks" class="btn btn-danger btn-lg m-3" title="Go to to-do page">
+        Go to Plan
+      </a>
+    <?php endif; ?>
   </main>
 
   <!-- Footer -->

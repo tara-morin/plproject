@@ -95,7 +95,9 @@
               <!-- Updated to use the controller's static formatTime function -->
               <td><?php echo StudyWithMeController::formatTime($task['time_spent']); ?></td>
               <td>
-                <a href="index.php?command=focus" class="btn btn-success">FOCUS</a>
+                <?php 
+                $taskData = json_encode($task);?>
+                <a href="index.php?command=focus&task_data=<?=urlencode(json_encode($task))?>" class="btn btn-success" role="button" >FOCUS</a>
               </td>
               <td>
                 <!-- Update button that triggers the modal -->

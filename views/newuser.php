@@ -14,9 +14,9 @@
 
   <h1 class="text-center">Study With Me</h1>
   <p class="text-center">Sign Up for Study With Me</p>
-
+  
   <?php
-    // Display errors from session if any
+    // Php code block to display any errors from a previous profile creation
     if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
         echo '<div class="alert alert-danger">';
         foreach ($_SESSION['errors'] as $err) {
@@ -34,8 +34,7 @@
     class="mx-auto my-4" 
     style="max-width: 400px;"
   >
-    <!-- The same form is used for both sign-in and sign-up logic,
-         which your controller handles by checking the DB for an existing username. -->
+    <!-- Form for creating a profile, with fields for name, username, 2 for password, and user status in the app. -->
 
     <div class="mb-3">
       <label for="name" class="form-label">Full Name</label>
@@ -91,9 +90,9 @@
         <option value="work">Work</option>
       </select>
     </div>
-
+    <!--submits form and will redirect to login screen-->
     <button type="submit" class="btn btn-primary w-100">
-      Continue
+      Sign Up
     </button>
   </form>
 </div>

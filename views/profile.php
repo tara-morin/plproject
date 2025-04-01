@@ -46,7 +46,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
     </nav>
 
     <div class="container-fluid align-items-center">
-        <!-- Row 1: Profile Picture and Full Name -->
+        <!--Profile Picture and Full Name -->
         <div class="row d-flex justify-content-start">
             <div class="col-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" 
@@ -66,7 +66,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editNameModal">
                         Edit Name
                     </button>
-                    <!-- Modal for editing full name -->
+                    <!-- Modal for editing the user's full name -->
                     <div class="modal fade" id="editNameModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -95,7 +95,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
             </div>
         </div>
 
-        <!-- Row 2: Membership Duration -->
+        <!--Membership Duration- to be implemented later -->
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col d-flex justify-content-start align-items-center">
                 <h1 class="display-6 px-2">Member for </h1>
@@ -104,7 +104,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
             </div>
         </div>
 
-        <!-- Row 3: Usage Type and Settings -->
+        <!--Usage Type and space for additional Settings -->
         <div class="row d-flex justify-content-center align-items-center text-center">
             <div class="col-6 d-flex flex-column align-items-center">
                 <h1 class="display-6 mb-2">I'm using StudyBuddy for...</h1> 
@@ -116,6 +116,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                     <label class="form-check-label ms-2">Work</label> 
                 </div>
             </div>
+
             <div class="col-6">
                 <p class="mt-3">More settings coming soon...</p>
             </div>

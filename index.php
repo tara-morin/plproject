@@ -3,8 +3,8 @@
  * index.php
  * Study With Me (No Chat)
  * 
- * Team Members: [Your Names Here]
- * Deployed Link: https://cs4640.cs.virginia.edu/<yourID>/sprint3
+ * Team Members: Tara Morin, Ninglan (Amy) Lei
+ * Deployed Link: https://cs4640.cs.virginia.edu/tmn7vs/sprint3
  */
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -17,24 +17,31 @@ $controller = new StudyWithMeController();
 $command = $_GET['command'] ?? 'welcome';
 
 switch ($command) {
+    //login screen (this is also the default)
     case 'login':
         $controller->login();
         break;
-    // case 'welcome':
-    //     $controller->showWelcome();
-    //     break;
+    //profile creation
     case 'create_profile':
         $controller->createProfile();
         break;
+    //redirect to home page
     case 'dashboard':
         $controller->showDashboard();
         break;
+    //logic to reset a user's username
+    case 'setName':
+        $controller->setName();
+        break;
+    //redirect to focus page
     case 'focus':
         $controller->showFocus();
         break;
+    //redirect to profile page
     case 'profile':
         $controller->showProfile();
         break;
+    //switch statements related to user's tasks are all below:
     case 'showTasks':
         $controller->showTasks();
         break;
@@ -51,12 +58,11 @@ switch ($command) {
     case 'getTasksJSON':
         $controller->getTasksJSON();
         break;
+    //log out
     case 'logout':
         $controller->logout();
         break;
-    case 'setName':
-        $controller->setName();
-        break;
+    //default redirects to login page
     default:
         $controller->login();
         break;

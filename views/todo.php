@@ -53,7 +53,7 @@
     
     <!-- Filter and New Task Controls -->
     <div class="d-flex justify-content-between align-items-center my-4 flex-wrap">
-      <!-- Simple filter dropdown -->
+      <!-- Simple filter dropdown, will implement in next sprint -->
       <div class="dropdown my-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" 
                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -95,6 +95,7 @@
               <!-- Updated to use the controller's static formatTime function -->
               <td><?php echo StudyWithMeController::formatTime($task['time_spent']); ?></td>
               <td>
+            <!--below code encodes the task into a JSON object and sends it through the URL to the focus screen.m-->
                 <?php 
                 $taskData = json_encode($task);?>
                 <a href="index.php?command=focus&task_data=<?=urlencode(json_encode($task))?>" class="btn btn-success" role="button" >FOCUS</a>

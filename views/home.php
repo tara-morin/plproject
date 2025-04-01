@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
  <html lang="en" >
  <head>
   <!--link to the deployed site: https://cs4640.cs.virginia.edu/tmn7vs/sprint2-->
@@ -105,4 +105,3 @@
  </body>
  
  </html>
- 

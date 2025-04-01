@@ -1,12 +1,12 @@
 <!DOCTYPE html>
  <html lang="en" >
  <head>
-  <!--link to the deployed site: https://cs4640.cs.virginia.edu/tmn7vs/sprint2-->
+  <!--link to the deployed site: https://cs4640.cs.virginia.edu/tmn7vs/sprint3-->
    <meta charset="UTF-8">  
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    
-   <meta name="author" content="Tara Morin">
+   <meta name="author" content="Tara Morin, Ninglan Lei">
    <meta name="description" content="StudyBuddy lets you focused and keep up with your tasks.">  
    <meta name="keywords" content="study focus studying focusing plan planner to-do">   
    <title>StudyBuddy Landing Page</title>
@@ -98,7 +98,7 @@
     
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
  
- <!-- </div> -->
+
  <footer class="footer p-2 g-col-6">
    <p>&copy; 2025</p>
  </footer>

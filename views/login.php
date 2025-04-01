@@ -16,14 +16,12 @@
   <p class="text-center">Sign in or create a new account</p>
 
   <?php
-    // Display errors from session if any
     if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
         echo '<div class="alert alert-danger">';
         foreach ($_SESSION['errors'] as $err) {
             echo "<p>$err</p>";
         }
         echo '</div>';
-        // Clear them out so they don't persist
         unset($_SESSION['errors']);
     }
 
@@ -32,7 +30,6 @@
       $message= $_SESSION['success'];
       echo "<p>$message</p>";
       echo '</div>';
-      // Clear them out so they don't persist
       unset($_SESSION['success']);
   }
 
@@ -44,8 +41,7 @@
     class="mx-auto my-4" 
     style="max-width: 400px;"
   >
-    <!-- This is the form  used for  sign-in logic only.
-          your controller handles by checking the DB for an existing username. -->
+    <!-- sign-in logic -->
 
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>

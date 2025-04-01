@@ -1,34 +1,29 @@
 <?php
 // File: views/focus.php
-// This view displays the Focus page.
-// (Assumes that any necessary session checks have already been done in the controller.)
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">  
-  <meta name="author" content="Ninglan Lei">
+  <meta name="author" content="Ninglan Lei, Tara Morin">
   <meta name="description" content="StudyBuddy Focus Page">  
   <meta name="keywords" content="study, focus, timer">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>StudyBuddy - Focus</title>
   
-  <!-- Bootstrap CSS -->
   <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
     rel="stylesheet" 
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
     crossorigin="anonymous">
 
-  <!-- Custom LESS/CSS -->
   <link rel="stylesheet/less" type="text/css" href="styles/custom.less">
   <script src="https://cdn.jsdelivr.net/npm/less"></script>
 </head>
 
 <body>
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
     <div class="container-fluid">
       <a class="navbar-brand" href="index.php?command=dashboard">StudyBuddy</a>
@@ -52,7 +47,6 @@
   <!-- Main Focus Container -->
   <main class="container text-center my-5">
     <?php if (isset($task_info) && !empty($task_info)): ?>
-      <!-- If task info is available, show the regular focus page -->
       <h1 class="display-1" id="timer" aria-live="polite">15:42</h1>
       
       <h2 class="lead" id="currentTask"><?= htmlspecialchars($task_info['title']) ?></h2>
@@ -66,7 +60,6 @@
         Save Progress &amp; Return Home
       </a>
     <?php else: ?>
-      <!-- If task info is not available, show a message -->
       <h2 class="lead">No task selected. Please pick a task to focus on.</h2>
       
       <a href="index.php?command=showTasks" class="btn btn-danger btn-lg m-3" title="Go to to-do page">
@@ -75,7 +68,6 @@
     <?php endif; ?>
   </main>
 
-  <!-- Footer -->
   <footer class="footer p-2 text-center">
     <p>&copy; 2025 CS4640</p>
   </footer>

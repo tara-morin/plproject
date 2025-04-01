@@ -404,13 +404,29 @@ class StudyWithMeController {
         }
     }
 
-    public function setUsername(){
-        $new_username= trim($_POST["username"]);
-        $query= "UPDATE swm_users SET username = $1 WHERE id = $2";
-        $this->db->query($query, $new_username, $_SESSION["user_id"]);
-        $username= $new_username;
-        $_SESSION["username"]= $new_username;
+    public function setName() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
+            header("Location: index.php?command=login");
+            exit();
+        }
+        $newName = trim($_POST['name'] ?? '');
+        // Validate the new name: ensure it's not empty.
+        if (strlen($newName) === 0) {
+            $_SESSION['errors'] = "Name cannot be empty.";
+            header("Location: index.php?command=profile");
+            exit();
+        }
+        // Update the name in the database
+        $this->db->query(
+            "UPDATE swm_users SET name = $1 WHERE id = $2",
+            $newName, $_SESSION['user_id']
+        );
+        // Update the name in the session
+        $_SESSION['name'] = $newName;
         header("Location: index.php?command=profile");
+        exit();
     }
+    
+    
     
 }

@@ -1,8 +1,7 @@
 <?php
 // File: views/profile.php
 // Ensure the user is logged in (this check is already done in the controller).
-// You can display session variables (if available) for personalization.
-$username = $_SESSION['username'] ?? 'User';
+$fullname = $_SESSION['name'] ?? 'User'; // Use the full name stored during login/registration.
 $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the database.
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
     </nav>
 
     <div class="container-fluid align-items-center">
-        <!-- Row 1: Profile Picture and Username -->
+        <!-- Row 1: Profile Picture and Full Name -->
         <div class="row d-flex justify-content-start">
             <div class="col-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" 
@@ -60,36 +59,35 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                 <div class="row" style="min-height: 30px;"></div>
                 <div class="col">
                     <h1 class="lead" id="usernameDisplay">
-                        <?php echo htmlspecialchars($username); ?>
+                        <?php echo htmlspecialchars($fullname); ?>
                     </h1>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Edit username
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editNameModal">
+                        Edit Name
                     </button>
-                    <!-- Modal for editing username -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+                    <!-- Modal for editing full name -->
+                    <div class="modal fade" id="editNameModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Username</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Enter a new username:
-                                    <form action= "index.php/?command=setUsername" method="POST" >
+                                <form action="index.php?command=setName" method="POST">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="editNameModalLabel">Edit Name</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="mb-3">
-                                            <label class="form-label">Username</label>
-                                            <input type="text" class="form-control" id="username" name="username" 
-                                                   value="<?php echo htmlspecialchars($username); ?>" required>
+                                            <label class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="name" name="name" 
+                                                   value="<?php echo htmlspecialchars($fullname); ?>" required>
                                         </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

@@ -395,8 +395,31 @@ class StudyWithMeController {
         $_SESSION['name'] = $newName;
         header("Location: index.php?command=profile");
         exit();
+    } 
+
+    public function getLeaderboardJson() {
+        header('Content-Type: application/json');
+        
+        // calculate a 7‑day window (today and the previous 6 days)
+        $startDate = date('Y-m-d', strtotime('-6 days'));
+        $endDate   = date('Y-m-d');
+        
+        // aggregate total session minutes per user
+        $sql = "
+          SELECT
+            u.username,
+            FLOOR(SUM(EXTRACT(EPOCH FROM (s.end_time - s.start_time))) / 60)::INT
+              AS total_minutes
+          FROM swm_sessions s
+          JOIN swm_users    u ON s.user_id = u.id
+          WHERE s.session_type = 'focus'
+            AND DATE(s.start_time) BETWEEN \$1 AND \$2
+          GROUP BY u.username
+          ORDER BY total_minutes DESC
+        ";
+        $rows = $this->db->query($sql, $startDate, $endDate);
+        
+        echo json_encode($rows);
+        exit();
     }
-    
-    
-    
 }

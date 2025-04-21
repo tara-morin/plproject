@@ -16,7 +16,7 @@
    <link rel="stylesheet/less" type="text/css" href="styles/custom.less" > 
    <script src="https://cdn.jsdelivr.net/npm/less"></script>  
  </head>
- <body>
+ <body data-username="<?= htmlspecialchars($_SESSION['name']) ?>">
  <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
    <div class="container-fluid">
      <a class="navbar-brand" href="#">StudyBuddy</a>
@@ -44,7 +44,12 @@
             <div class="container">
                 <h2 class="text-center mb-3">Weekly Leaderboard</h2>
                 <div class="card">
-                    <ul class="list-group list-group-flush">
+                    <ul id="leaderboard" class="list-group list-group-flush">
+                        <!-- JS will fill this -->
+                    </ul>
+                </div>
+                <!-- <div class="card">
+                    <ul id="leaderboard" class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center justify-content-between">
                             <span>
                                 🥇 <strong>1st Place</strong>
@@ -73,7 +78,7 @@
                             <span class="badge third">7 hr 21 mins</span>
                         </li>
                     </ul>
-                </div>
+                </div> -->
             </div> 
         </div> 
      <div class="col-md-6 p-3">
@@ -97,6 +102,9 @@
      </div>
     
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="…" crossorigin="anonymous"></script>
+     <script src="js/home.js"></script>
+
  
 
  <footer class="footer p-2 g-col-6">

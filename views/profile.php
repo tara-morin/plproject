@@ -119,11 +119,32 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
 
             <div class="col-6">
                 <p class="mt-3">More settings coming soon...</p>
+                <?php
+                    // (Place right after the settings row in profile.php)
+                    // You could fetch real numbers from your controller; here are placeholders:
+                    $studyThisWeek    = 12;    // hours
+                    $studyStreak      = 5;     // days
+                    $workThisWeek     = 20;    // hours
+                    $tasksCompleted   = 8;     // count
+                ?>
+                <div id="schoolStats" class="mode-stats card my-4 p-3">
+                    <h2 class="h5">📚 Weekly Study Summary</h2>
+                    <p>Total study time this week: <strong><?= $studyThisWeek ?>hrs</strong></p>
+                    <p>Current study streak: <strong><?= $studyStreak ?>days</strong></p>
+                </div>
+
+                <div id="workStats" class="mode-stats card my-4 p-3" style="display:none;">
+                    <h2 class="h5">💼 Weekly Work Summary</h2>
+                    <p>Total work time this week: <strong><?= $workThisWeek ?>hrs</strong></p>
+                    <p>Tasks completed this week: <strong><?= $tasksCompleted ?></strong></p>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/profileStats.js"></script>
+
     <footer class="footer p-2 g-col-6">
         <p>&copy; 2025</p>
     </footer>

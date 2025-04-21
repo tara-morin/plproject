@@ -58,6 +58,9 @@ switch ($command) {
     case 'getTasksJSON':
         $controller->getTasksJSON();
         break;
+    case 'getLeaderboardJson':
+        $controller->getLeaderboardJson();
+        break;
     //log out
     case 'logout':
         $controller->logout();

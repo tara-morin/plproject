@@ -11,7 +11,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once "src/StudyWithMeController.php";
+require_once "/students/tmn7vs/students/tmn7vs/private/test/src/StudyWithMeController.php";
 
 $controller = new StudyWithMeController();
 $command = $_GET['command'] ?? 'welcome';
@@ -54,6 +54,8 @@ switch ($command) {
     case 'deleteTask':
         $controller->deleteTask();
         break;
+    case 'logTaskTime':
+        $controller->logTaskTime();
     // JSON endpoint
     case 'getTasksJSON':
         $controller->getTasksJSON();

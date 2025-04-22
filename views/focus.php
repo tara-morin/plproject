@@ -77,7 +77,7 @@
       button.onclick= startTimer;
       const time_spent= starting_time - time;
       console.log("time spent: " + time_spent);
-      grand_total + = time_spent;
+      grand_total += time_spent;
   }
   function logTime(){
     //get task information from the header
@@ -131,14 +131,18 @@
   }
 
   function startStudySession(){
-    session_started= True;
+    if (typeof task_data === 'undefined') {
+      alert('Task data is missing! Please go back and select a task before starting the timer.');
+      return;}
+    session_started= true;
+    let ID = task_data.user_id;
     fetch('index.php?command=startStudy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-      userID: userID
+      userID: ID
     })
     });
   }

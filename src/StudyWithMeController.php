@@ -208,7 +208,7 @@ class StudyWithMeController {
             exit();
         }
 
-        $timeDecimal = $this->convertTimeToHours($timeSpent);
+        $timeDecimal = $this->convertTimeToHours("0:00");
 
         $res = $this->db->query(
             "INSERT INTO swm_tasks (user_id, title, due_date, time_spent)
@@ -385,11 +385,13 @@ class StudyWithMeController {
         // echo "time spent: "+$taskTime;
         // echo "userID is"+$userID;
         // echo "taskID is"+$taskID;
+        $timeinMinutes= $taskTime/ 3600;
+        $timeInHours = round($timeInMinutes/60, 2);
         $this->db->query(
             "UPDATE swm_tasks
              SET time_spent= $1
              WHERE id = $2 AND user_id = $3",
-            $time, $taskID, $_SESSION['user_id']
+            $timeInHours, $taskID, $userID
         );
 
     }
@@ -401,7 +403,7 @@ class StudyWithMeController {
         $this->db->query(
             "INSERT INTO swm_sessions (user_id, session_type, start_time) 
               VALUES ($1, $2, $3)",
-            $userID, "session", $_SESSION['user_id']
+            $userID, "session", CURRENT_TIMESTAMP
         );
     }
 
@@ -409,7 +411,23 @@ class StudyWithMeController {
         $input = json_decode(file_get_contents('php://input'), true);
         $userID= intval($input['userID']);
         //sql query logic goes here
+        $this->db->query(
+            "SELECT id FROM swm_sessions 
+                WHERE user_id = $1 AND end_time IS NULL 
+                ORDER BY start_time DESC LIMIT 1;",
+            $userID,
+        );
+        if (count($result) > 0) {
+            $sessionID = $result[0]['id'];
+            $this->db->query(
+                "UPDATE swm_sessions 
+                 SET end_time = CURRENT_TIMESTAMP, 
+                     duration = EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - start_time)) / 60.0 
+                 WHERE id = $1",
+                [$sessionID]
+            );
     }
+}
     public function setName() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
             header("Location: index.php?command=login");

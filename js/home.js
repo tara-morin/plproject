@@ -1,11 +1,10 @@
-// js/home.js
 (function() {
   'use strict';
 
   // Wait for DOM
   $(function() {
     const $lb = $('#leaderboard');
-    if (!$lb.length) return;  // only run on home.php
+    if (!$lb.length) return;
 
     // 1) Fetch & render the leaderboard
     $.getJSON('index.php?command=getLeaderboardJson')
@@ -46,7 +45,7 @@
           }
         });
 
-        // 3) Add tooltip showing study time
+        // Add tooltip showing study time
         $lb.find('.list-group-item').tooltip({
           title: function() {
             return $(this).find('.badge').text() + ' studied';
@@ -58,7 +57,7 @@
         $lb.html('<li class="list-group-item text-center text-danger">Could not load leaderboard.</li>');
       });
 
-    // 4) Confirm before starting focus session
+    // Confirm before starting focus session
     $('#focusBtn').on('click', e => {
       const task = $(e.currentTarget).data('task-title');
       if (!confirm(`Start focus session for “${task}”?`)) {

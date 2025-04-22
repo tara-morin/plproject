@@ -43,12 +43,12 @@
         <div class="col-md-6 p-3">
             <div class="container">
                 <h2 class="text-center mb-3">Weekly Leaderboard</h2>
-                <div class="card">
-                    <ul id="leaderboard" class="list-group list-group-flush">
-                        <!-- JS will fill this -->
-                    </ul>
-                </div>
                 <!-- <div class="card">
+                    <ul id="leaderboard" class="list-group list-group-flush">
+                        
+                    </ul>
+                </div> -->
+                <div class="card">
                     <ul id="leaderboard" class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center justify-content-between">
                             <span>
@@ -78,7 +78,7 @@
                             <span class="badge third">7 hr 21 mins</span>
                         </li>
                     </ul>
-                </div> -->
+                </div>
             </div> 
         </div> 
      <div class="col-md-6 p-3">

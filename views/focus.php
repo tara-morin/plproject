@@ -46,6 +46,11 @@
       }
     }
     function startTimer(){
+      //make sure a task is present
+      if (typeof task_data === 'undefined') {
+        alert('Task data is missing! Please go back and select a task before starting the timer.');
+        return;
+      }
       //get the start button
       const button= document.getElementById('timerBtn');
       button.textContent="Pause";

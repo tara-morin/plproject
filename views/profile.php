@@ -143,7 +143,37 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/profileStats.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  const switchEl = document.getElementById('flexSwitchCheckDefault');
+  const schoolEl = document.getElementById('schoolStats');
+  const workEl   = document.getElementById('workStats');
+
+  if (!switchEl || !schoolEl || !workEl) {
+    console.warn('profileStats.js: missing element(s)', { switchEl, schoolEl, workEl });
+    return;
+  }
+
+  // arrow‑function
+  const updateView = () => {
+    if (switchEl.checked) {
+      schoolEl.style.display = 'none';
+      workEl.style.display   = 'block';
+      console.log('Switched to WORK view');
+    } else {
+      workEl.style.display   = 'none';
+      schoolEl.style.display = 'block';
+      console.log('Switched to SCHOOL view');
+    }
+  };
+
+  // initialize
+  updateView();
+
+  // arrow callback for the event listener
+  switchEl.addEventListener('change', () => updateView());
+});
+    </script>
 
     <footer class="footer p-2 g-col-6">
         <p>&copy; 2025</p>

@@ -79,33 +79,41 @@
       console.log("time spent: " + time_spent);
       grand_total += time_spent;
   }
-  function logTime(){
-    //get task information from the header
-    if (typeof task_data === 'undefined') {
-      alert('Task data is missing! Please go back and select a task before starting the timer.');
-      return;}
+  async function logTime(){
+  if (typeof task_data === 'undefined') {
+    alert('Task data is missing! Please go back and select a task before starting the timer.');
+    return;
+  }
 
-    const taskID = task_data.id;
-    const userID = task_data.user_id;
-    console.log("user ID is:"+userID);
-    console.log("task ID is:"+taskID);
-    if (grand_total<60){
-      alert('You must spend more than 1 minute studying to log study time!');
-      return;
-    }
-    //make request to controller
-    fetch('index.php?command=logTaskTime', {
+  const taskID = task_data.id;
+  const userID = task_data.user_id;
+
+  if (grand_total < 60) {
+    alert('You must spend more than 1 minute studying to log study time!');
+    return;
+  }
+
+  try {
+    const response = await fetch('index.php?command=logTaskTime', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-      time: time_spent,
-      taskID: taskID,
-      userID: userID
-    })
+        time: grand_total,
+        taskID: taskID,
+        userID: userID
+      })
     });
+
+    if (!response.ok) {
+      console.error('Failed to log time:', response.statusText);
+    }
+  } catch (err) {
+    console.error('Fetch error:', err);
   }
+}
+
   function triggerModal(){
     modal = new bootstrap.Modal(document.getElementById('timerModal'));
     modal.show();
@@ -130,34 +138,73 @@
     modal.hide();
   }
 
-  function startStudySession(){
-    if (typeof task_data === 'undefined') {
-      alert('Task data is missing! Please go back and select a task before starting the timer.');
-      return;}
-    session_started= true;
-    let ID = task_data.user_id;
-    fetch('index.php?command=startStudy', {
+  async function startStudySession(){
+  if (typeof task_data === 'undefined') {
+    alert('Task data is missing! Please go back and select a task before starting the timer.');
+    return;
+  }
+  session_started = true;
+
+  try {
+    await fetch('index.php?command=startStudy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userID: task_data.user_id })
+    });
+  } catch (err) {
+    console.error('Failed to start study session:', err);
+  }
+}
+async function endStudySession() {
+  if (typeof task_data === 'undefined') {
+    alert('Task data is missing! Please go back and select a task before starting the timer.');
+    return;
+  }
+
+  const taskID = task_data.id;
+  const userID = task_data.user_id;
+  const time_spent = grand_total;
+
+  if (grand_total < 60) {
+    alert('You must spend more than 1 minute studying to log study time!');
+    return;
+  }
+
+  try {
+    //Wait for logging task time
+    await fetch('index.php?command=logTaskTime', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-      userID: ID
-    })
+        time: time_spent,
+        taskID: taskID,
+        userID: userID
+      })
     });
-  }
-  function endStudySession(){
-    fetch('index.php?command=endStudy', {
+
+    // Wait for ending the session and updating that time
+    await fetch('index.php?command=endStudy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-      userID: userID
-    })
+        userID: userID
+      })
     });
-    logTime();
+
+    //Redirect to home
+    window.location.href = 'index.php?command=dashboard';
+  } catch (error) {
+    console.error('Failed to end study session:', error);
+    alert('There was an error saving your session. Please try again.');
   }
+}
+
   window.addEventListener('unload', function(event){
     localStorage.setItem('time', time);
     localStorage.setItem('grand_total', grand_total);
@@ -232,10 +279,10 @@
         Start
       </button>
       
-      <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" onclick="endStudySession();" 
+      <button class="btn btn-primary btn-lg m-3" id="saveProgressBtn" onclick="endStudySession();" 
          title="Save progress and return home">
         Log Session Time &amp; Return Home
-      </a>
+    </button>
     <?php else: ?>
       <h2 class="lead">No task selected. Please pick a task to focus on.</h2>
       

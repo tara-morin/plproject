@@ -194,10 +194,6 @@
                 <label for="due_date" class="form-label">Due Date</label>
                 <input type="date" class="form-control" id="due_date" name="due_date" required>
               </div>
-              <div class="mb-3">
-                <label for="time_spent" class="form-label">Time Spent (hh:mm)</label>
-                <input type="text" class="form-control" id="time_spent" name="time_spent" placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
-              </div>
             </fieldset>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

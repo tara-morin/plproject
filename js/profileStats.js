@@ -1,17 +1,15 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   const switchEl = document.getElementById('flexSwitchCheckDefault');
   const schoolEl = document.getElementById('schoolStats');
   const workEl   = document.getElementById('workStats');
 
-  // Debug: make sure we found them
   if (!switchEl || !schoolEl || !workEl) {
-    console.warn('profileStats.js: missing element(s)', {
-      switchEl, schoolEl, workEl
-    });
+    console.warn('profileStats.js: missing element(s)', { switchEl, schoolEl, workEl });
     return;
   }
 
-  function updateView() {
+  // arrow‑function
+  const updateView = () => {
     if (switchEl.checked) {
       schoolEl.style.display = 'none';
       workEl.style.display   = 'block';
@@ -21,13 +19,13 @@ document.addEventListener('DOMContentLoaded', function() {
       schoolEl.style.display = 'block';
       console.log('Switched to SCHOOL view');
     }
-  }
+  };
 
-  // Initialize
+  // initialize
   updateView();
 
-  // Re‑run on toggle
-  switchEl.addEventListener('change', updateView);
+  // arrow callback for the event listener
+  switchEl.addEventListener('change', () => updateView());
 });
 
   

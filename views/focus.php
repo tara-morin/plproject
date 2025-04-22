@@ -22,6 +22,11 @@
   <link rel="stylesheet/less" type="text/css" href="styles/custom.less">
   <script src="https://cdn.jsdelivr.net/npm/less"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <?php if (isset($_GET['task_data'])): ?>
+  <script>
+    let task_data = <?= json_encode(json_decode(urldecode($_GET['task_data']))) ?>;
+  </script>
+<?php endif; ?>
   <script>
     let time;
     let interval;
@@ -69,12 +74,17 @@
   }
   function logTime(){
     //get task information from the header
-    const json = document.getElementById('task-data').textContent;
-    const data = JSON.parse(json);
-    const taskID = data.id;
-    const userID = data.userID;
+    if (typeof task_data === 'undefined') {
+      alert('Task data is missing! Please go back and select a task before starting the timer.');
+      return;}
+
+    const taskID = task_data.id;
+    const userID = task_data.user_id;
+    console.log("user ID is:"+userID);
+    console.log("task ID is:"+taskID);
     //calculate the amount of time spent
     const time_spent= starting_time- time;
+    console.log("time spent: "+time_spent);
     //making request to the php controller to log the task time
     fetch('index.php?command=logTaskTime', {
       method: 'POST',

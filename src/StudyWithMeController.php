@@ -213,7 +213,7 @@ class StudyWithMeController {
         $res = $this->db->query(
             "INSERT INTO swm_tasks (user_id, title, due_date, time_spent)
              VALUES ($1, $2, $3, $4)",
-            $_SESSION['user_id'], $title, $dueDate, $timeDecimal
+            $_SESSION['user_id'], $title, $dueDate, 0
         );
 
         if (count($res) == 0) {
@@ -378,13 +378,13 @@ class StudyWithMeController {
     }
     public function logTaskTime(){
         $input = json_decode(file_get_contents('php://input'), true);
-        $timeSpent = intval($input['time']);
+        $taskTime = intval($input['time']);
         $userID= intval($input['userID']);
         $taskID= intval($input['taskID']);
-        echo "printing some stuff out";
-        echo $timeSpent;
-        echo $userID;
-        echo $taskID;
+        // echo "printing some stuff out";
+        // echo "time spent: "+$taskTime;
+        // echo "userID is"+$userID;
+        // echo "taskID is"+$taskID;
         $this->db->query(
             "UPDATE swm_tasks
              SET time_spent= $1

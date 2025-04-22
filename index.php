@@ -60,6 +60,13 @@ switch ($command) {
     case 'getTasksJSON':
         $controller->getTasksJSON();
         break;
+    //logic for Focus screen study sessions
+    case 'startStudy':
+        $controller->startStudySession();
+        break;
+    case 'endStudy':
+        $controller->endStudySession();
+        break;
     //log out
     case 'logout':
         $controller->logout();

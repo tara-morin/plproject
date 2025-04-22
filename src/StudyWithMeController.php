@@ -198,9 +198,9 @@ class StudyWithMeController {
         if ($title === '') {
             $errors[] = "Task title is required.";
         }
-        if ($timeSpent !== '' && !preg_match("/^\d{1,2}:\d{2}$/", $timeSpent)) {
-            $errors[] = "Time must be in hh:mm format (e.g. 1:30).";
-        }
+        // if ($timeSpent !== '' && !preg_match("/^\d{1,2}:\d{2}$/", $timeSpent)) {
+        //     $errors[] = "Time must be in hh:mm format (e.g. 1:30).";
+        // }
 
         if (count($errors) > 0) {
             $_SESSION['task_errors'] = $errors;
@@ -213,7 +213,7 @@ class StudyWithMeController {
         $res = $this->db->query(
             "INSERT INTO swm_tasks (user_id, title, due_date, time_spent)
              VALUES ($1, $2, $3, $4)",
-            $_SESSION['user_id'], $title, $dueDate, 0
+            $_SESSION['user_id'], $title, $dueDate, $timeDecimal
         );
 
         if (count($res) == 0) {
@@ -391,6 +391,24 @@ class StudyWithMeController {
              WHERE id = $2 AND user_id = $3",
             $time, $taskID, $_SESSION['user_id']
         );
+
+    }
+
+    public function startStudySession(){
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userID= intval($input['userID']);
+        //sql query logic goes here
+        $this->db->query(
+            "INSERT INTO swm_sessions (user_id, session_type, start_time) 
+              VALUES ($1, $2, $3)",
+            $userID, "session", $_SESSION['user_id']
+        );
+    }
+
+    public function endStudySession(){
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userID= intval($input['userID']);
+        //sql query logic goes here
     }
     public function setName() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
@@ -410,8 +428,5 @@ class StudyWithMeController {
         $_SESSION['name'] = $newName;
         header("Location: index.php?command=profile");
         exit();
-    }
-    
-    
-    
+    }    
 }

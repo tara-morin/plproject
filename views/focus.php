@@ -32,6 +32,8 @@
     let interval;
     let modal;
     let starting_time;
+    let grand_total;
+    let session_started= false;
     function getTimeasString(time){
       const hours = Math.floor(time / 3600);
       const mins = Math.floor((time % 3600) / 60);
@@ -53,8 +55,11 @@
         let input_time = 10;
         time = input_time * 60;
       }
+      if (!session_started){
+        startStudySession();
+      }
       //keep track of what the timer is starting at
-      starting_time= time;
+      starting_time = time;
       interval= setInterval(updateTimer, 1000);
   }
     function updateTimer(){
@@ -70,7 +75,9 @@
       button.textContent="Resume";
       //redirect event listener
       button.onclick= startTimer;
-      logTime();
+      const time_spent= starting_time - time;
+      console.log("time spent: " + time_spent);
+      grand_total + = time_spent;
   }
   function logTime(){
     //get task information from the header
@@ -82,10 +89,11 @@
     const userID = task_data.user_id;
     console.log("user ID is:"+userID);
     console.log("task ID is:"+taskID);
-    //calculate the amount of time spent
-    const time_spent= starting_time- time;
-    console.log("time spent: "+time_spent);
-    //making request to the php controller to log the task time
+    if (grand_total<60){
+      alert('You must spend more than 1 minute studying to log study time!');
+      return;
+    }
+    //make request to controller
     fetch('index.php?command=logTaskTime', {
       method: 'POST',
       headers: {
@@ -122,13 +130,41 @@
     modal.hide();
   }
 
+  function startStudySession(){
+    session_started= True;
+    fetch('index.php?command=startStudy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+      userID: userID
+    })
+    });
+  }
+  function endStudySession(){
+    fetch('index.php?command=endStudy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+      userID: userID
+    })
+    });
+    logTime();
+  }
   window.addEventListener('unload', function(event){
     localStorage.setItem('time', time);
+    localStorage.setItem('grand_total', grand_total);
+    localStorage.setItem('boolean', session_started);
     logTime();
   });
 
   window.addEventListener('load', function(event){
     localStorage.getItem('time', time);
+    localStorage.getItem('grand_total', grand_total);
+    localStorage.getItem('boolean', session_started);
     if (time!=null){
       let mins= Math.floor(time/60);
       let seconds= time % 60;
@@ -192,9 +228,9 @@
         Start
       </button>
       
-      <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" 
+      <a href="index.php?command=dashboard" class="btn btn-primary btn-lg m-3" id="saveProgressBtn" onclick="endStudySession();" 
          title="Save progress and return home">
-        Save Progress &amp; Return Home
+        Log Session Time &amp; Return Home
       </a>
     <?php else: ?>
       <h2 class="lead">No task selected. Please pick a task to focus on.</h2>

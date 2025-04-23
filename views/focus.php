@@ -28,18 +28,103 @@
   </script>
 <?php endif; ?>
   <script>
-    let time;
-    let interval;
     let modal;
-    let starting_time;
-    let grand_total;
-    let session_started= false;
+    let my_session;
+    let set_time=null;
+    function StudySession(){
+      this.time= null;
+      this.interval= null;
+      this.starting_time= null;
+      this.grand_total=0;
+      this.session_started=false;
+      this.start= async function(){
+        if (typeof task_data === 'undefined') {
+          alert('Task data is missing! Please go back and select a task before starting the timer.');
+          return;
+        }
+        session_started = true;
+
+          try {
+            const start_response= await fetch('index.php?command=startStudy', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ userID: task_data.user_id })
+            });
+            if (!start_response.ok) {
+              const errorText = await start_response.text(); // Fallback in case response is not JSON
+              throw new Error(`Server returned status ${start_response.status}: ${errorText}`);
+            }
+
+            const data = await start_response.json();
+
+            // Optional: handle failure from server
+            if (!data.success) {
+              throw new Error(data.error || 'Unknown server error occurred.');
+            }
+          } catch (err) {
+            console.error('Failed to start study session:', err);
+          }}
+        this.end= async function(){
+          if (typeof task_data === 'undefined') {
+            alert('Task data is missing! Please go back and select a task before starting the timer.');
+            return;
+          }
+          const time_spent = this.grand_total;
+          console.log("grand total for the session is:")
+          console.log(time_spent);
+          if (this.grand_total < 60) {
+            alert('You must spend more than 1 minute studying to log study time!');
+            return;
+          }
+        try {
+          //Wait for logging task time
+          console.log("logging time now.");
+          const result= await logTime();
+          if (result==false){
+            console.log("issue logging task time");
+            alert("issue logging task time");
+            return;
+          }
+          console.log("logged task time, now going to end session");
+          console.log("user ID is:");
+          console.log(task_data.user_id);
+          // Wait for ending the session and updating that time
+          const endResponse= await fetch('index.php?command=endStudy', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              userID: task_data.user_id
+            })
+          });
+        const endResult = await endResponse.json();
+
+        if (!endResponse.ok || !endResult.success) {
+          console.error('Failed to end study session:', endResult.error || endResponse.statusText);
+          alert('Error ending session: ' + (endResult.error || 'Unknown error'));
+          return;
+        }
+        if (endResult.success && result==true ){
+          my_session.session_started = false;
+          //Redirect to home
+          window.location.href = 'index.php?command=dashboard';
+        }
+        } catch (error) {
+          console.error('Failed to end study session:', error);
+          alert('There was an error saving your session. Please try again.');
+        }
+        }
+  }
+
     function getTimeasString(time){
       const hours = Math.floor(time / 3600);
       const mins = Math.floor((time % 3600) / 60);
       const seconds = time % 60;
       if (hours>=1){
-        return `${hours}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        return `{hours}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }
       else{
         return `${mins}:${seconds.toString().padStart(2, '0')}`;
@@ -56,67 +141,101 @@
       button.textContent="Pause";
       //redirect event listener
       button.onclick= pauseTimer;
-      if (time==null){
-        let input_time = 10;
-        time = input_time * 60;
+      if (my_session==null){
+        //if session is null, start a new one
+        my_session= new StudySession();
+        my_session.start();
+        //check if a time was entered into the setTimer function
+        if (my_session.time==null && set_time!=null){
+          my_session.time = set_time;
+        }
+        else{
+        //if no time was put in, use the default of 30 minutes
+        my_session.time = 30 * 60;
+        }
       }
-      if (!session_started){
-        startStudySession();
+      else if (my_session.started==false){
+        //check if there is technically a session present but data has already been sent to the server
+        //in this case we will start a new session
+        my_session= new StudySession();
+        my_session.start();
+        //check if a time was entered into the setTimer function
+        if (my_session.time==null && set_time!=null){
+          my_session.time = set_time;
+        }
+        //if no time was put in, use the default of 30 minutes
+        my_session.time = 30 * 60;
       }
       //keep track of what the timer is starting at
-      starting_time = time;
-      interval= setInterval(updateTimer, 1000);
+      my_session.starting_time = my_session.time;
+      my_session.interval= setInterval(updateTimer, 1000);
   }
     function updateTimer(){
       const timer= document.getElementById('timer');
-      timer.textContent = getTimeasString(time);
-      time--;
+      timer.textContent = getTimeasString(my_session.time);
+      my_session.time--;
     }
   function pauseTimer(){
       //pause the time
-      clearInterval(interval);
+      clearInterval(my_session.interval);
       //get the pause button
       const button= document.getElementById('timerBtn');
       button.textContent="Resume";
       //redirect event listener
       button.onclick= startTimer;
-      const time_spent= starting_time - time;
-      console.log("time spent: " + time_spent);
-      grand_total += time_spent;
+      const time_spent= my_session.starting_time - my_session.time;
+      my_session.grand_total += time_spent;
   }
   async function logTime(){
-  if (typeof task_data === 'undefined') {
-    alert('Task data is missing! Please go back and select a task before starting the timer.');
-    return;
-  }
-
-  const taskID = task_data.id;
-  const userID = task_data.user_id;
-
-  if (grand_total < 60) {
-    alert('You must spend more than 1 minute studying to log study time!');
-    return;
-  }
-
-  try {
-    const response = await fetch('index.php?command=logTaskTime', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        time: grand_total,
-        taskID: taskID,
-        userID: userID
-      })
-    });
-
-    if (!response.ok) {
-      console.error('Failed to log time:', response.statusText);
+    if (typeof task_data === 'undefined') {
+      alert('Task data is missing! Please go back and select a task before starting the timer.');
+      return;
     }
-  } catch (err) {
-    console.error('Fetch error:', err);
-  }
+    if (my_session.grand_total < 60) {
+      alert('You must spend more than 1 minute studying to log study time!');
+      return;
+    }
+    console.log("grand total is:");
+    console.log(my_session.grand_total);
+    console.log("to test nullifying, taskid is");
+    console.log(task_data.id);
+    console.log("and last, userid is");
+    console.log(task_data.user_id);
+    try {
+      const logResponse = await fetch('index.php?command=logTaskTime', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          time: my_session.grand_total,
+          taskID: task_data.id,
+          userID: task_data.user_id
+        })
+      });
+      const logText = await logResponse.json();
+      console.log('Raw response from server:', logText);
+
+      let logData;
+      try {
+        logData = JSON.parse(logText);
+      } catch (e) {
+        console.error('JSON parse error:', e);
+        return false;
+      }
+
+      if (!logResponse.ok || !logText.success) {
+        console.error('Failed to log time:', logText.error || logResponse.statusText);
+        alert('Error logging your study time: ' + (logText.error || 'Unknown error.'));
+        return false;
+      }
+      //clear the current grand_total since time was logged
+      console.error("made it to end of logTime function");
+      my_session.grand_total = 0;
+      return true;
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
 }
 
   function triggerModal(){
@@ -133,108 +252,58 @@
       let time_array= inputValue.split(':');
       let hours = time_array[0];
       let mins = time_array[1];
-      time = (hours * 3600) + (mins * 60);
+      set_time = (hours * 3600) + (mins * 60);
+      //check if a session has already begun and the user wants to set a new time
+      if (my_session!=null){
+        my_session.time= set_time;
+      }
+      //otherwise, the set_time variable is now saved and will be assigned to my_session.time once a new session is started.
     }
     else{
       alert("Submit time in hours and minutes format! Ex. 2:30");
       return;
     }
-    timer.textContent= getTimeasString(time);
+    timer.textContent= getTimeasString(set_time);
     modal.hide();
   }
 
-  async function startStudySession(){
-  if (typeof task_data === 'undefined') {
-    alert('Task data is missing! Please go back and select a task before starting the timer.');
-    return;
-  }
-  session_started = true;
-
-  try {
-    await fetch('index.php?command=startStudy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userID: task_data.user_id })
-    });
-  } catch (err) {
-    console.error('Failed to start study session:', err);
-  }
-}
-async function endStudySession() {
-  if (typeof task_data === 'undefined') {
-    alert('Task data is missing! Please go back and select a task before starting the timer.');
-    return;
-  }
-
-  const taskID = task_data.id;
-  const userID = task_data.user_id;
-  const time_spent = grand_total;
-
-  if (grand_total < 60) {
-    alert('You must spend more than 1 minute studying to log study time!');
-    return;
-  }
-
-  try {
-    //Wait for logging task time
-    await fetch('index.php?command=logTaskTime', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        time: time_spent,
-        taskID: taskID,
-        userID: userID
-      })
-    });
-
-    // Wait for ending the session and updating that time
-    await fetch('index.php?command=endStudy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userID: userID
-      })
-    });
-
-    //Redirect to home
-    window.location.href = 'index.php?command=dashboard';
-  } catch (error) {
-    console.error('Failed to end study session:', error);
-    alert('There was an error saving your session. Please try again.');
-  }
-}
-
   window.addEventListener('unload', function(event){
-    localStorage.setItem('time', time);
-    localStorage.setItem('grand_total', grand_total);
-    localStorage.setItem('boolean', session_started);
     logTime();
+    localStorage.setItem('session', JSON.stringify(my_session));
   });
 
   window.addEventListener('load', function(event){
-    localStorage.getItem('time', time);
-    localStorage.getItem('grand_total', grand_total);
-    localStorage.getItem('boolean', session_started);
-    if (time!=null){
-      let mins= Math.floor(time/60);
-      let seconds= time % 60;
-      document.getElementById("timer").textContent= time;
-    }
-    else{
-      //default of 30 minutes on the timer
-      time= 30 * 60;
-      let mins= Math.floor(time/60);
-      let seconds= time % 60;
-      seconds= seconds < 10 ? '0' + seconds : seconds;
+    const data= localStorage.getItem('session');
+    localStorage.removeItem('session');
+    if (!data || data === 'undefined' || data === 'null') {
+      // Default to 30 minutes on the timer
+      let time = 30 * 60;
+      let mins = Math.floor(time / 60);
+      let seconds = time % 60;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
       document.getElementById("timer").textContent = `${mins}:${seconds.toString().padStart(2, '0')}`;
+    }else {
+      const data_as_json = JSON.parse(data);
+      my_session = new StudySession();
+      Object.assign(my_session, data_as_json);
+      document.getElementById("timer").textContent = getTimeasString(my_session.time);
     }
-});
+  });
+  function resetSession() {
+    //stop any timer
+    clearInterval(my_session?.interval);
+    //nullify session object
+    my_session = null;
+    set_time = null;
+
+    // Reset timer display to 30 minutes
+    const defaultTime = 30 * 60;
+    const timer = document.getElementById("timer");
+    timer.textContent = getTimeasString(defaultTime);
+
+    // clear session from local storage
+    localStorage.removeItem('session');
+  }
   </script>
   <!-- <script type="text/javascript" src="timer.js"></script> -->
 </head>
@@ -284,10 +353,11 @@ async function endStudySession() {
         Start
       </button>
       
-      <button class="btn btn-primary btn-lg m-3" id="saveProgressBtn" onclick="endStudySession();" 
+      <button class="btn btn-primary btn-lg m-3" id="saveProgressBtn" onclick="my_session.end();" 
          title="Save progress and return home">
         Log Session Time &amp; Return Home
     </button>
+    <button class="btn btn-danger btn-sm" onclick="resetSession()">Reset Session</button>
     <?php else: ?>
       <h2 class="lead">No task selected. Please pick a task to focus on.</h2>
       

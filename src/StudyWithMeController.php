@@ -1,7 +1,6 @@
 <?php
 require_once 'Config.php';
 require_once 'Database.php';
-
 class StudyWithMeController {
     private $db;
 
@@ -14,10 +13,10 @@ class StudyWithMeController {
     // Login
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            include __DIR__ ."/../views/login.php";
+            include __DIR__ ."/views/login.php";
             exit();
         } else if (!isset($_POST["username"])) {
-            include __DIR__ . '/../views/login.php';
+            include __DIR__ . '/views/login.php';
             exit();
         }
         
@@ -132,7 +131,7 @@ class StudyWithMeController {
         $next_task= $this->getNextTask();
         $task_info= json_decode($next_task,true);
         $task_title = $task_info['title']?? 'No upcoming task';
-        include __DIR__ . '/../views/home.php';
+        include __DIR__ . '/views/home.php';
     }
 
     public function showFocus() {
@@ -150,7 +149,7 @@ class StudyWithMeController {
         $task_info= $_SESSION["task_info"];
     }
 
-        include __DIR__ . '/../views/focus.php';
+        include __DIR__ . '/views/focus.php';
     }
     
     public function showProfile() {
@@ -159,7 +158,7 @@ class StudyWithMeController {
             exit();
         }
         
-        include __DIR__ . '/../views/profile.php';
+        include __DIR__ . '/views/profile.php';
     }
     
     public function logout() {
@@ -177,7 +176,7 @@ class StudyWithMeController {
             "SELECT * FROM swm_tasks WHERE user_id = $1 ORDER BY created_at DESC",
             $_SESSION['user_id']
         );
-        include __DIR__ . '/../views/todo.php';
+        include __DIR__ . '/views/todo.php';
     }
 
     public function createTask() {
@@ -313,13 +312,14 @@ class StudyWithMeController {
         $userId = $_SESSION["user_id"];
     
         $query = "
-            SELECT start_time, end_time
-            FROM swm_sessions
-            WHERE user_id = $1
-            AND DATE(start_time) = $2
-            AND session_type = 'focus';
+        SELECT start_time, end_time
+        FROM swm_sessions
+        WHERE user_id = $1
+        AND DATE(start_time) = $2
+        AND session_type = 'focus'
+        AND end_time IS NOT NULL;
         ";
-    
+
         $result = $this->db->query($query, $_SESSION["user_id"], $currentDate);
     
         $studyTime= 0.0;
@@ -327,7 +327,7 @@ class StudyWithMeController {
        foreach($result as $row) {
             $startTime = strtotime($row['start_time']);
             $endTime = strtotime($row['end_time']);
-    
+            $studyTimeInHours = 0.0;
             if ($startTime && $endTime) {
                 $sessionDurationInSeconds = $endTime - $startTime;
                 $studyTimeInHours += $sessionDurationInSeconds / 3600;
@@ -378,56 +378,105 @@ class StudyWithMeController {
     }
     public function logTaskTime(){
         $input = json_decode(file_get_contents('php://input'), true);
+        if ($input === null || !isset($input['time'], $input['userID'], $input['taskID'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Invalid or missing JSON input"]);
+            return;
+        }
+    
         $taskTime = intval($input['time']);
-        $userID= intval($input['userID']);
-        $taskID= intval($input['taskID']);
-        // echo "printing some stuff out";
-        // echo "time spent: "+$taskTime;
-        // echo "userID is"+$userID;
-        // echo "taskID is"+$taskID;
-        $timeinMinutes= $taskTime/ 3600;
-        $timeInHours = round($timeInMinutes/60, 2);
-        $this->db->query(
+        $userID = intval($input['userID']);
+        $taskID = intval($input['taskID']);
+    
+        $timeInMinutes = $taskTime / 60;
+        $timeInHours = round($timeInMinutes / 60, 2);
+    
+        $result = $this->db->query(
             "UPDATE swm_tasks
-             SET time_spent= $1
+             SET time_spent = $1
              WHERE id = $2 AND user_id = $3",
             $timeInHours, $taskID, $userID
         );
-
+    
+        if ($result === false) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Failed to update task time."]);
+            return;
+        }
+    
+        echo json_encode(["success" => true]);
     }
+    
 
     public function startStudySession(){
         $input = json_decode(file_get_contents('php://input'), true);
         $userID= intval($input['userID']);
         //sql query logic goes here
-        $this->db->query(
+        $result= $this->db->query(
             "INSERT INTO swm_sessions (user_id, session_type, start_time) 
-              VALUES ($1, $2, $3)",
-            $userID, "session", CURRENT_TIMESTAMP
+              VALUES ($1, $2, CURRENT_TIMESTAMP)",
+            $userID, 'focus'
         );
+        if ($result === false) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Failed to start study session."]);
+            return;
+        }
+    
+        echo json_encode(["success" => true]);
     }
-
     public function endStudySession(){
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
         $input = json_decode(file_get_contents('php://input'), true);
-        $userID= intval($input['userID']);
-        //sql query logic goes here
-        $this->db->query(
+        if (!$input || !isset($input['userID'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Missing user ID in request."]);
+            return;
+        }
+    
+        $userID = intval($input['userID']);
+    
+        // Get the latest open session for the user
+        $result = $this->db->query(
             "SELECT id FROM swm_sessions 
-                WHERE user_id = $1 AND end_time IS NULL 
-                ORDER BY start_time DESC LIMIT 1;",
-            $userID,
+             WHERE user_id = $1 AND end_time IS NULL 
+             ORDER BY start_time DESC LIMIT 1",
+            $userID
         );
-        if (count($result) > 0) {
+    
+        if ($result === false) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Database error when finding active session."]);
+            return;
+        }
+    
+        if (is_array($result) && count($result) > 0) {
             $sessionID = $result[0]['id'];
-            $this->db->query(
+    
+            $updateResult = $this->db->query(
                 "UPDATE swm_sessions 
                  SET end_time = CURRENT_TIMESTAMP, 
                      duration = EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - start_time)) / 60.0 
                  WHERE id = $1",
-                [$sessionID]
+                $sessionID
             );
+    
+            if ($updateResult === false) {
+                http_response_code(500);
+                echo json_encode(["success" => false, "error" => "Failed to update session end time."]);
+                return;
+            }
+    
+            echo json_encode(["success" => true]);
+        } else {
+            http_response_code(404);
+            echo json_encode(["success" => false, "error" => "No active session found."]);
+            return;
+        }
     }
-}
+    
     public function setName() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
             header("Location: index.php?command=login");

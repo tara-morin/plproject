@@ -4,7 +4,7 @@
  * Study With Me (No Chat)
  * 
  * Team Members: Tara Morin, Ninglan (Amy) Lei
- * Deployed Link: https://cs4640.cs.virginia.edu/tmn7vs/sprint3
+ * Deployed Link: https://cs4640.cs.virginia.edu/tmn7vs/sprint4
  */
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -15,7 +15,7 @@ require_once "/students/tmn7vs/students/tmn7vs/private/sprint4/src/StudyWithMeCo
 
 $controller = new StudyWithMeController();
 $command = $_GET['command'] ?? 'welcome';
-
+ 
 switch ($command) {
     //login screen (this is also the default)
     case 'login':

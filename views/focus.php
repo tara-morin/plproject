@@ -24,9 +24,21 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <?php if (isset($_GET['task_data'])): ?>
   <script>
+    // Decode the task data URL-encoded string and parse it into an object
     let task_data = <?= json_encode(json_decode(urldecode($_GET['task_data']))) ?>;
+
+    // Ensure task_data exists and has a title
+    if (task_data && task_data.title) {
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('task-title').textContent = task_data.title;
+      });
+    } else {
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('task-title').textContent = 'No task data available';
+      });
+    }
   </script>
-<?php endif; ?>
+  <?php endif; ?>
   <script>
     let modal;
     let my_session;
@@ -42,6 +54,7 @@
           alert('Task data is missing! Please go back and select a task before starting the timer.');
           return;
         }
+        console.log("starting new session");
         session_started = true;
 
           try {
@@ -100,14 +113,16 @@
               userID: task_data.user_id
             })
           });
+        console.log("Received endResponse:", endResponse);
         const endResult = await endResponse.json();
-
+        console.log("Received endResult:", endResult);
         if (!endResponse.ok || !endResult.success) {
           console.error('Failed to end study session:', endResult.error || endResponse.statusText);
           alert('Error ending session: ' + (endResult.error || 'Unknown error'));
           return;
         }
-        if (endResult.success && result==true ){
+        if (endResult.success){
+          console.log("redirect finally working!!")
           my_session.session_started = false;
           //Redirect to home
           window.location.href = 'index.php?command=dashboard';
@@ -124,7 +139,7 @@
       const mins = Math.floor((time % 3600) / 60);
       const seconds = time % 60;
       if (hours>=1){
-        return `{hours}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        return `${hours}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }
       else{
         return `${mins}:${seconds.toString().padStart(2, '0')}`;
@@ -146,35 +161,46 @@
         my_session= new StudySession();
         my_session.start();
         //check if a time was entered into the setTimer function
-        if (my_session.time==null && set_time!=null){
-          my_session.time = set_time;
-        }
-        else{
-        //if no time was put in, use the default of 30 minutes
-        my_session.time = 30 * 60;
+        if (my_session.time == null) {
+          //use the set_time but if that is null, default to 30 minutes
+          my_session.time = set_time ?? (30 * 60);
         }
       }
       else if (my_session.started==false){
-        //check if there is technically a session present but data has already been sent to the server
+        //check if there is technically a session present, but data has already been sent to the server
         //in this case we will start a new session
         my_session= new StudySession();
         my_session.start();
         //check if a time was entered into the setTimer function
-        if (my_session.time==null && set_time!=null){
-          my_session.time = set_time;
+        if (my_session.time == null) {
+          //use the set_time but if that is null, default to 30 minutes
+          my_session.time = set_time ?? (30 * 60);
         }
-        //if no time was put in, use the default of 30 minutes
-        my_session.time = 30 * 60;
-      }
-      //keep track of what the timer is starting at
-      my_session.starting_time = my_session.time;
-      my_session.interval= setInterval(updateTimer, 1000);
   }
-    function updateTimer(){
-      const timer= document.getElementById('timer');
+    //keep track of what the timer is starting at
+    my_session.starting_time = my_session.time;
+    my_session.interval= setInterval(updateTimer, 1000);
+}
+  function updateTimer(){
+    const timer = document.getElementById('timer');
+    timer.textContent = getTimeasString(my_session.time);
+    my_session.time--;
+
+    if (my_session.time < 0) {
+      clearInterval(my_session.interval);
+      alert("TIME'S UP! Take a break or start again.");
+      pauseTimer();
+      //reset session time to 0
+      my_session.time = 0;
+      //reset timer display to 0 too
+      const timer = document.getElementById('timer');
       timer.textContent = getTimeasString(my_session.time);
-      my_session.time--;
+      const button = document.getElementById('timerBtn');
+      button.textContent = "Start";
+      button.onclick = startTimer;
     }
+  }
+
   function pauseTimer(){
       //pause the time
       clearInterval(my_session.interval);
@@ -185,6 +211,7 @@
       button.onclick= startTimer;
       const time_spent= my_session.starting_time - my_session.time;
       my_session.grand_total += time_spent;
+      my_session.starting_time = my_session.time;
   }
   async function logTime(){
     if (typeof task_data === 'undefined') {
@@ -347,7 +374,7 @@
           </div>
         </div> 
       </div>
-      <h2 class="lead" id="currentTask"><?= htmlspecialchars($task_info['title']) ?></h2>
+      <h2 class="lead" id="task-title"></h2>
       
       <button class="btn btn-secondary btn-lg m-3" id="timerBtn" title="Start the timer" onclick="startTimer()">
         Start

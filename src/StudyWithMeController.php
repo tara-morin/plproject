@@ -53,6 +53,8 @@ class StudyWithMeController {
             $_SESSION['status']   = $row['status'];
         } else {
             $_SESSION['errors'] = ["Account not found for this username."];
+            header("Location: index.php?command=login");
+            exit(); 
         }
         if (count($errors) > 0) {
             $_SESSION['errors'] = $errors;
@@ -68,7 +70,7 @@ class StudyWithMeController {
 
     public function createProfile(){
         if (!isset($_POST["username"]) && !isset($_POST["conf_password"])){
-            include __DIR__ . '/../views/newuser.php';
+            include __DIR__ . '/views/newuser.php';
             exit();
         }
         $name          = trim($_POST['name'] ?? '');
@@ -390,10 +392,11 @@ class StudyWithMeController {
     
         $timeInMinutes = $taskTime / 60;
         $timeInHours = round($timeInMinutes / 60, 2);
-    
+
+        //update time_spent on task by adding on the timespent to the existing time
         $result = $this->db->query(
             "UPDATE swm_tasks
-             SET time_spent = $1
+             SET time_spent = COALESCE(time_spent, 0) + $1
              WHERE id = $2 AND user_id = $3",
             $timeInHours, $taskID, $userID
         );
@@ -426,16 +429,12 @@ class StudyWithMeController {
         echo json_encode(["success" => true]);
     }
     public function endStudySession(){
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
         $input = json_decode(file_get_contents('php://input'), true);
         if (!$input || !isset($input['userID'])) {
             http_response_code(400);
             echo json_encode(["success" => false, "error" => "Missing user ID in request."]);
             return;
         }
-    
         $userID = intval($input['userID']);
     
         // Get the latest open session for the user

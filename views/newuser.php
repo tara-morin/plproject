@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up for Study With Me</title>
+  <title>Sign Up for StudyBuddy</title>
   <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
     rel="stylesheet" 
@@ -12,8 +12,8 @@
 <body>
 <div class="container my-5">
 
-  <h1 class="text-center">Study With Me</h1>
-  <p class="text-center">Sign Up for Study With Me</p>
+  <h1 class="text-center">StudyBuddy</h1>
+  <p class="text-center">Sign Up for StudyBuddy</p>
   
   <?php
     // Php code block to display any errors from a previous profile creation

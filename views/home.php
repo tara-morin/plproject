@@ -87,7 +87,7 @@
           </div>
           <div class="lead"><?php echo $study_today?></div>
           <div class="p-2 g-col-6 text-body-secondary">
-            today through StudyWithMe.
+            today through StudyBuddy.
           </div>
     </div>
        

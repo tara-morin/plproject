@@ -12,7 +12,7 @@
 <body>
 <div class="container my-5">
 
-  <h1 class="text-center">Study With Me</h1>
+  <h1 class="text-center">StudyBuddy</h1>
   <p class="text-center">Sign in or create a new account</p>
 
   <?php
@@ -71,7 +71,7 @@
     </button>
   </form>
   <a href="index.php?command=create_profile" class="btn">
-    New to StudyWithMe? Sign up
+    New to StudyBuddy? Sign up here
 </a>
 </div>
 

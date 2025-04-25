@@ -42,11 +42,6 @@
         <div class="col-md-6 p-3">
             <div class="container">
                 <h2 class="text-center mb-3">Weekly Leaderboard</h2>
-                <!-- <div class="card">
-                    <ul id="leaderboard" class="list-group list-group-flush">
-                        
-                    </ul>
-                </div> -->
                 <div class="card">
                     <ul id="leaderboard" class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center justify-content-between">
@@ -172,9 +167,6 @@
   });
 })();
      </script>
-
- 
-
  <footer class="footer p-2 g-col-6">
    <p>&copy; 2025</p>
  </footer>

@@ -59,11 +59,11 @@
           Filter by
         </button>
         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-          <li><a class="dropdown-item" href="#">Due Date</a></li>
-          <li><a class="dropdown-item" href="#">Class</a></li>
-          <li><a class="dropdown-item" href="#">Project</a></li>
-          <li><a class="dropdown-item" href="#">Time Spent</a></li>
-        </ul>
+        <li><a class="dropdown-item filter-option" data-filter="due_date" href="#">Due Date</a></li>
+        <li><a class="dropdown-item filter-option" data-filter="time_spent" href="#">Time Spent</a></li>
+        <li><a class="dropdown-item filter-option" data-filter="name" href="#">Task Name</a></li>
+      </ul>
+
       </div>
 
       <!-- New Task Button triggers the creation modal -->
@@ -139,12 +139,7 @@
                         <input type="date" class="form-control" id="due_date_<?php echo $task['id']; ?>" 
                                name="due_date" value="<?php echo htmlspecialchars($task['due_date']); ?>" required>
                       </div>
-                      <div class="mb-3">
-                        <label for="time_spent_<?php echo $task['id']; ?>" class="form-label">Time Spent (hh:mm)</label>
-                        <input type="text" class="form-control" id="time_spent_<?php echo $task['id']; ?>" 
-                               name="time_spent" value="<?php echo StudyWithMeController::formatTime($task['time_spent']); ?>" 
-                               placeholder="e.g. 0:30" pattern="^\d{1,2}:\d{2}$">
-                      </div>
+                      
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="completed" 
                                id="completed_<?php echo $task['id']; ?>"
@@ -213,5 +208,80 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
           integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
           crossorigin="anonymous"></script>
+<script>
+  const tasks = <?php echo json_encode($tasks); ?>;
+  document.querySelectorAll('.filter-option').forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.preventDefault();
+      const filterType = e.target.dataset.filter;
+      filterTasks(filterType);
+    });
+  });
+
+  //generates the tasks table again based on the filter the user chose
+  function filterTasks(type) {
+    let filtered = [...tasks];
+
+    if (type === 'due_date') {
+      filtered.sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+    } else if (type === 'time_spent') {
+      filtered.sort((a, b) => a.time_spent - b.time_spent);
+    } else if (type === 'name') {
+      filtered.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    updateTaskTable(filtered);
+  }
+
+  //new function to format TimeSpent correctly since the old one is in our controller and this needs to be dynamic.
+  function formatTime(timespent) {
+  const hours = Math.floor(timespent);
+  const minutes = Math.round((timespent - hours) * 60);
+  return `${hours} hours ${minutes} minutes`;
+}
+
+
+  //makes the rows
+  function updateTaskTable(taskList) {
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = ''; // Clear current rows
+
+    if (taskList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center">No tasks found.</td></tr>';
+      return;
+    }
+
+    taskList.forEach(task => {
+    const row = document.createElement('tr');
+    //make the HTML using the same code from above, but this will generate the tasks in order
+    row.innerHTML = `
+  <td>${task.due_date}</td>
+  <td>${task.title}</td>
+  <td>${formatTime(task.time_spent)}</td>
+  <td>
+    <a href="index.php?command=focus&task_data=${encodeURIComponent(JSON.stringify(task))}" class="btn btn-success" role="button">FOCUS</a>
+  </td>
+  <td>
+    <button type="button" class="btn btn-warning btn-sm" 
+            data-bs-toggle="modal" 
+            data-bs-target="#updateTaskModal_${task.id}">
+      Update
+    </button>
+  </td>
+  <td>
+    <form action="index.php?command=deleteTask" method="POST" 
+          onsubmit="return confirm('Are you sure you want to delete this task?');">
+      <input type="hidden" name="task_id" value="${task.id}">
+      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+    </form>
+  </td>
+`;
+
+
+  tbody.appendChild(row);
+});
+
+  }
+</script>
 </body>
 </html>

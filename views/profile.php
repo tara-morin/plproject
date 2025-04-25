@@ -94,15 +94,6 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
             </div>
         </div>
 
-        <!--Membership Duration- to be implemented later -->
-        <div class="row d-flex justify-content-center align-items-center">
-            <div class="col d-flex justify-content-start align-items-center">
-                <h1 class="display-6 px-2">Member for </h1>
-                <h1 class="display-6 px-2 day-count"><?php echo htmlspecialchars($memberDays); ?></h1>
-                <h1 class="display-6 px-2">days</h1>
-            </div>
-        </div>
-
         <!--Usage Type and space for additional Settings -->
         <div class="row d-flex justify-content-center align-items-center text-center">
             <div class="col-6 d-flex flex-column align-items-center">

@@ -65,17 +65,7 @@
               },
               body: JSON.stringify({ userID: task_data.user_id })
             });
-            if (!start_response.ok) {
-              const errorText = await start_response.text(); // Fallback in case response is not JSON
-              throw new Error(`Server returned status ${start_response.status}: ${errorText}`);
-            }
-
             const data = await start_response.json();
-
-            // Optional: handle failure from server
-            if (!data.success) {
-              throw new Error(data.error || 'Unknown server error occurred.');
-            }
           } catch (err) {
             console.error('Failed to start study session:', err);
           }}

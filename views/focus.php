@@ -339,7 +339,6 @@
           <a class="nav-link" href="index.php?command=dashboard">Home</a>
           <a class="nav-link active" aria-current="page" href="index.php?command=focus">Focus</a>
           <a class="nav-link" href="index.php?command=showTasks">Plan</a>
-          <a class="nav-link" href="index.php?command=chat">Chat</a>
           <a class="nav-link" href="index.php?command=profile">Profile</a>
         </div>
       </div>

@@ -4,7 +4,7 @@
  * Study With Me (No Chat)
  * 
  * Team Members: Tara Morin, Ninglan (Amy) Lei
- * Deployed Link: https://cs4640.cs.virginia.edu/tmn7vs/sprint4
+ * Deployed Link: https://cs4640.cs.virginia.edu/tmn7vs/studybuddy
  */
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);

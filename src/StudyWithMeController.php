@@ -13,10 +13,10 @@ class StudyWithMeController {
     // Login
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            include __DIR__ ."/../views/login.php";
+            include __DIR__ ."/views/login.php";
             exit();
         } else if (!isset($_POST["username"])) {
-            include __DIR__ . '/../views/login.php';
+            include __DIR__ . '/views/login.php';
             exit();
         }
         
@@ -70,7 +70,7 @@ class StudyWithMeController {
 
     public function createProfile(){
         if (!isset($_POST["username"]) && !isset($_POST["conf_password"])){
-            include __DIR__ . '/../views/newuser.php';
+            include __DIR__ . '/views/newuser.php';
             exit();
         }
         $name          = trim($_POST['name'] ?? '');
@@ -133,7 +133,7 @@ class StudyWithMeController {
         $next_task= $this->getNextTask();
         $task_info= json_decode($next_task,true);
         $task_title = $task_info['title']?? 'No upcoming task';
-        include __DIR__ . '/../views/home.php';
+        include __DIR__ . '/views/home.php';
     }
 
     public function showFocus() {
@@ -151,7 +151,7 @@ class StudyWithMeController {
         $task_info= $_SESSION["task_info"];
     }
 
-        include __DIR__ . '/../views/focus.php';
+        include __DIR__ . '/views/focus.php';
     }
     
     public function showProfile() {
@@ -208,7 +208,7 @@ class StudyWithMeController {
         $tasksCompleted = $rows && count($rows) ? $rows[0]['num'] : 0;
 
         
-        include __DIR__ . '/../views/profile.php';
+        include __DIR__ . '/views/profile.php';
     }
     
     public function logout() {
@@ -226,7 +226,7 @@ class StudyWithMeController {
             "SELECT * FROM swm_tasks WHERE user_id = $1 ORDER BY created_at DESC",
             $_SESSION['user_id']
         );
-        include __DIR__ . '/../views/todo.php';
+        include __DIR__ . '/views/todo.php';
     }
 
     public function createTask() {

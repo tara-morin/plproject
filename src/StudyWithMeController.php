@@ -13,10 +13,10 @@ class StudyWithMeController {
     // Login
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            include __DIR__ ."/views/login.php";
+            include __DIR__ ."/../views/login.php";
             exit();
         } else if (!isset($_POST["username"])) {
-            include __DIR__ . '/views/login.php';
+            include __DIR__ . '/../views/login.php';
             exit();
         }
         
@@ -70,7 +70,7 @@ class StudyWithMeController {
 
     public function createProfile(){
         if (!isset($_POST["username"]) && !isset($_POST["conf_password"])){
-            include __DIR__ . '/views/newuser.php';
+            include __DIR__ . '/../views/newuser.php';
             exit();
         }
         $name          = trim($_POST['name'] ?? '');
@@ -133,7 +133,7 @@ class StudyWithMeController {
         $next_task= $this->getNextTask();
         $task_info= json_decode($next_task,true);
         $task_title = $task_info['title']?? 'No upcoming task';
-        include __DIR__ . '/views/home.php';
+        include __DIR__ . '/../views/home.php';
     }
 
     public function showFocus() {
@@ -151,7 +151,7 @@ class StudyWithMeController {
         $task_info= $_SESSION["task_info"];
     }
 
-        include __DIR__ . '/views/focus.php';
+        include __DIR__ . '/../views/focus.php';
     }
     
     public function showProfile() {
@@ -159,8 +159,56 @@ class StudyWithMeController {
             header("Location: index.php?command=login");
             exit();
         }
+        $userID = intval($_SESSION['user_id']);   // <-- matches rest of file
+
+        $userID = intval($_SESSION['user_id']);
+
+        /* ─── 1. weekly focus-session total (hours) ─────────────────────────── */
+        $totalSql = "
+            SELECT COALESCE(
+                     SUM(EXTRACT(EPOCH FROM (end_time - start_time))), 0
+                   ) AS total_seconds
+            FROM   swm_sessions
+            WHERE  user_id      = $1
+              AND  session_type = 'focus'
+              AND  start_time  >= (CURRENT_DATE - INTERVAL '6 days')
+        ";
+        $rows          = $this->db->query($totalSql, $userID);
+        $totalSeconds  = $rows && count($rows) ? $rows[0]['total_seconds'] : 0;
+        $studyThisWeek = round($totalSeconds / 3600, 2);
+    
+        /* 2. identical value for work-mode card (until we store work sessions) */
+        $workThisWeek  = $studyThisWeek;   // same data source for now
+    
+        /* ─── 3. current study streak (consecutive days with ≥1 focus session) */
+        $streakSql = "
+            WITH offsets AS (SELECT generate_series(0, 6) AS d)
+            SELECT COUNT(*) AS streak
+            FROM   offsets o
+            WHERE  EXISTS (
+                SELECT 1
+                FROM   swm_sessions
+                WHERE  user_id      = $1
+                  AND  session_type = 'focus'
+                  AND  DATE(start_time) = CURRENT_DATE - o.d
+            )
+        ";
+        $rows        = $this->db->query($streakSql, $userID);
+        $studyStreak = $rows && count($rows) ? $rows[0]['streak'] : 0;
+    
+        /* ─── 4. tasks completed this week (optional work metric) ───────────── */
+        $taskSql = "
+            SELECT COUNT(*) AS num
+            FROM   swm_tasks
+            WHERE  user_id    = $1
+              AND  completed  = TRUE
+              AND  due_date  >= (CURRENT_DATE - INTERVAL '6 days')
+        ";
+        $rows           = $this->db->query($taskSql, $userID);
+        $tasksCompleted = $rows && count($rows) ? $rows[0]['num'] : 0;
+
         
-        include __DIR__ . '/views/profile.php';
+        include __DIR__ . '/../views/profile.php';
     }
     
     public function logout() {
@@ -178,7 +226,7 @@ class StudyWithMeController {
             "SELECT * FROM swm_tasks WHERE user_id = $1 ORDER BY created_at DESC",
             $_SESSION['user_id']
         );
-        include __DIR__ . '/views/todo.php';
+        include __DIR__ . '/../views/todo.php';
     }
 
     public function createTask() {

@@ -122,21 +122,29 @@ $memberDays = $_SESSION['member_days'] ?? 27; // For example, or query from the 
                 <?php
                     // (Place right after the settings row in profile.php)
                     // You could fetch real numbers from your controller; here are placeholders:
-                    $studyThisWeek    = 12;    // hours
-                    $studyStreak      = 5;     // days
+                    // $studyThisWeek    = 12;    // hours
+                    // $studyStreak      = 5;     // days
                     $workThisWeek     = 20;    // hours
                     $tasksCompleted   = 8;     // count
                 ?>
                 <div id="schoolStats" class="mode-stats card my-4 p-3">
                     <h2 class="h5">📚 Weekly Study Summary</h2>
-                    <p>Total study time this week: <strong><?= $studyThisWeek ?>hrs</strong></p>
-                    <p>Current study streak: <strong><?= $studyStreak ?>days</strong></p>
+                    <p>Total study time this week:
+                        <strong><?= number_format($studyThisWeek, 2) ?> hrs</strong>
+                    </p>
+                    <p>Current study streak:
+                        <strong><?= $studyStreak ?> day<?= $studyStreak === 1 ? '' : 's' ?></strong>
+                    </p>
                 </div>
 
-                <div id="workStats" class="mode-stats card my-4 p-3" style="display:none;">
+                <div id="workStats" class="mode-stats card my-4 p-3" >
                     <h2 class="h5">💼 Weekly Work Summary</h2>
-                    <p>Total work time this week: <strong><?= $workThisWeek ?>hrs</strong></p>
-                    <p>Tasks completed this week: <strong><?= $tasksCompleted ?></strong></p>
+                    <p>Total work time this week:
+                        <strong><?= number_format($studyThisWeek, 2) ?> hrs</strong>
+                    </p>
+                    <p>Current work streak:
+                        <strong><?= $studyStreak ?> day<?= $studyStreak === 1 ? '' : 's' ?></strong>
+                    </p>
                 </div>
             </div>
         </div>

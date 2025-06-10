@@ -97,7 +97,7 @@
     
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
      <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-7JcQ5j8ZnxV9fjsN8skE1hb1N+W4bt+XvDr3tJc/nXk="
+        integrity="sha256-7JcQ5j8ZnxV9fjsN8skE1hb1N+W4bt+XvDr3tJc/nXk"
         crossorigin="anonymous"></script>
         (function() {
   'use strict';
